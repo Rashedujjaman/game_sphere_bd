@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Customize the bottom sheet content here
           child: Center(
             child: Text(
-              'Your Bottom Sheet Content',
+              'Your Bottom Sheet Content go',
               style: TextStyle(fontSize: 20),
             ),
           ),
