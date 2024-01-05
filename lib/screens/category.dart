@@ -14,7 +14,7 @@ class _CategoeryScreenState extends State<CategoeryScreen> {
   final List<ImageModel> carouselImages = [
     ImageModel(imagePath: 'assets/images/garena.png'),
     ImageModel(imagePath: 'assets/images/callofduty.jpg'),
-    ImageModel(imagePath: 'assets/images/rgg.png'),
+    ImageModel(imagePath: 'assets/images/pubg.jpg'),
   ];
   @override
   Widget build(BuildContext context) {
