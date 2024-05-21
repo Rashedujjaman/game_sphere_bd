@@ -1,7 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:game_sphere_bd/screens/aboutus_screen.dart';
+import 'package:game_sphere_bd/screens/bulkorder_screen.dart';
+import 'package:game_sphere_bd/screens/cart_screen.dart';
 import 'package:game_sphere_bd/screens/login_screen.dart';
+import 'package:game_sphere_bd/screens/order_screen.dart';
+import 'package:game_sphere_bd/screens/profile.dart';
+import 'package:game_sphere_bd/screens/reward_center_screen.dart';
+import 'package:game_sphere_bd/screens/wishlist_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
+  bool userLoggedIn = true;
+
+  void logoutUser(BuildContext context) {
+    // Perform logout operations here (e.g., clearing user data, resetting authentication status)
+    // Example: Clear user session, navigate to login screen
+    // Replace the logic below with your actual logout logic
+
+    userLoggedIn = false;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+      (route) => false, // Clear all previous routes from the stack
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -21,7 +44,7 @@ class CustomDrawer extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'MD Rasheedujjan Reza',
+                  'MD Rashedujjan Reza',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -31,24 +54,39 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Home'),
+            leading: const Icon(Icons.account_circle),
+            title: const Text('Profile'),
             onTap: () {
-              // Handle tapping the Home menu item
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {
-              // Handle tapping the Settings menu item
+              // Handle tapping the Profile menu item
+              //connect to profile page
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileScreen()),
+              );
             },
           ),
           ListTile(
             leading: const Icon(Icons.history),
-            title: const Text('Purchase History'),
+            title: const Text('Orders'),
             onTap: () {
-              // Handle tapping the Purchase History menu item
+              // Handle tapping the Orders menu item
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => OrderHistoryScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.shopping_cart),
+            title: const Text('Cart'),
+            onTap: () {
+              // Handle tapping the Orders menu item
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CartScreen()),
+              );
             },
           ),
           ListTile(
@@ -56,13 +94,10 @@ class CustomDrawer extends StatelessWidget {
             title: const Text('Wishlist'),
             onTap: () {
               // Handle tapping the Wishlist menu item
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.shopping_cart),
-            title: const Text('Bulk Order'),
-            onTap: () {
-              // Handle tapping the Bulk Order menu item
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WishlistScreen()),
+              );
             },
           ),
           ListTile(
@@ -70,31 +105,47 @@ class CustomDrawer extends StatelessWidget {
             title: const Text('Reward Center'),
             onTap: () {
               // Handle tapping the Reward Center menu item
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RewardCenterScreen()),
+              );
             },
           ),
+          //make a bulk order button
           ListTile(
-              leading: const Icon(Icons.account_circle),
-              title: const Text('Account Management'),
-              onTap: () {
-                //navigate login
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const LoginScreen();
-                }));
-              }),
-          ListTile(
-            leading: const Icon(Icons.report),
-            title: const Text('Report an issue'),
+            leading: const Icon(Icons.shopping_basket),
+            title: const Text('Bulk Order'),
             onTap: () {
-              // Handle tapping the Report an issue menu item
+              // Handle tapping the Reward Center menu item
+              //connect to bulk order screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BulkOrderFormScreen()),
+              );
             },
           ),
+
           ListTile(
             leading: const Icon(Icons.info),
             title: const Text('About us'),
             onTap: () {
               // Handle tapping the About us menu item
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AboutUsScreen()),
+              );
             },
           ),
+          const SizedBox(height: 16),
+          //logout or login button that will be shown conditionally based on user login status;
+          if (userLoggedIn)
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () {
+                logoutUser(context);
+              },
+            ),
         ],
       ),
     );

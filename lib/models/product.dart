@@ -5,28 +5,33 @@ class ProductModel {
   String name;
   String description;
   String image;
-  String rating = '4.5';
-  Variant variant;
-  ProductModel(
-      {required this.id,
-      required this.name,
-      required this.description,
-      required this.image,
-      required this.variant});
+  double rating = 4.5;
+  List<Variant> variants;
+
+  ProductModel({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.image,
+    required this.variants,
+  });
 
   ProductModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
         description = json['description'],
         image = json['image'],
-        variant = json['variant'];
+        variants = (json['variants'] as List<dynamic>)
+            .map((variantJson) => Variant.fromJson(variantJson))
+            .toList();
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'description': description,
       'image': image,
-      'variant': variant,
+      'variants': variants,
     };
   }
 }

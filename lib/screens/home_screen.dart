@@ -4,6 +4,7 @@ import 'package:game_sphere_bd/models/product.dart';
 import 'package:game_sphere_bd/models/promotion.dart';
 import 'package:game_sphere_bd/models/variant.dart';
 import 'package:game_sphere_bd/screens/all_products.dart';
+import 'package:game_sphere_bd/screens/cart_screen.dart';
 import 'package:game_sphere_bd/widgets/menu_drawer.dart';
 import 'package:game_sphere_bd/widgets/product_card_widget.dart';
 
@@ -19,38 +20,198 @@ class _HomeScreenState extends State<HomeScreen> {
     ImageModel(imagePath: 'assets/images/garena.png'),
     ImageModel(imagePath: 'assets/images/callofduty.jpg'),
     ImageModel(imagePath: 'assets/images/pubg.jpg'),
+    ImageModel(imagePath: 'assets/images/unipin.jpg'),
+    ImageModel(imagePath: 'assets/images/freefire.jpg'),
+    ImageModel(imagePath: 'assets/images/rgg.png'),
   ];
 
-  ProductModel product = ProductModel(
-    id: 1,
-    name: 'Call of Duty:',
-    image:
-        'https://cdn.cloudflare.steamstatic.com/steam/apps/1289310/capsule_616x353.jpg?t=1632935379',
-    description:
-        'Call of Duty: Mobile is a free-to-play first-person shooter game developed by TiMi Studios and published by Activision for Android and iOS. It was released on October 1, 2019. In its first month, the game had over 148 million downloads and generated nearly US '
-        '54 million in revenue, making it the largest mobile game launch in history.',
-    variant: Variant(
+  final List<ProductModel> products = [
+    ProductModel(
       id: 1,
-      name: 'Call of Duty: Mobil',
-      price: 100,
-      amount: 13,
+      name: 'Garena Shell',
+      image: 'https://image.offgamers.com/infolink/2023/05/garena-tw.jpg',
+      description:
+          'Garena Shells Code (Malaysia) sold by SEAGM is a region locked product. It is only valid for Garena account registered in the region of MALAYSIA. All purchases are NON-REFUNDABLE and NON-RETURNABLE.',
+      variants: [
+        Variant(
+          id: 1,
+          name: 'Shell',
+          price: 1920,
+          amount: 1300,
+        ),
+        Variant(
+          id: 2,
+          name: 'Shell',
+          price: 970,
+          amount: 650,
+        ),
+        Variant(
+          id: 3,
+          name: 'Shell',
+          price: 450,
+          amount: 300,
+        ),
+        Variant(
+          id: 4,
+          name: 'Shell',
+          price: 290,
+          amount: 180,
+        ),
+        Variant(
+          id: 5,
+          name: 'Shell',
+          price: 150,
+          amount: 90,
+        ),
+      ],
     ),
-  );
-
-  //another product
-  ProductModel product2 = ProductModel(
-    id: 2,
-    name: 'PUBG Mobile',
-    image: 'https://wstatic-prod.pubg.com/web/live/static/og/img-og-pubg.jpg',
-    description:
-        'PUBG Mobile is an online multiplayer battle royale game developed and published by PUBG Corporation, a subsidiary of South Korean video game company Bluehole. The game is based on previous mods that were created by Brendan "PlayerUnknown" Greene for other games, inspired by the 2000 Japanese film Battle Royale, and expanded into a standalone game under Greene\'s creative direction. In the game, up to one hundred players parachute onto an island and scavenge for weapons and equipment to kill others while avoiding getting killed themselves. The available safe area of the game\'s map decreases in size over time, directing surviving players into tighter areas to force encounters. The last player or team standing wins the round.',
-    variant: Variant(
-      id: 1,
-      name: 'Call of Duty: Mobile - Garena',
-      price: 100,
-      amount: 13,
+    ProductModel(
+      id: 2,
+      name: 'Republic GG',
+      image:
+          'https://my-milkadeal.s3.ap-southeast-1.amazonaws.com/storage/160000/129884/da1cfcc42d940104c3014d6a9f37901e.png',
+      description:
+          'Republic GG is a region locked product. It is only valid for Garena account registered in the region of MALAYSIA. All purchases are NON-REFUNDABLE and NON-RETURNABLE.',
+      variants: [
+        Variant(
+          id: 1,
+          name: 'RGG',
+          price: 1920,
+          amount: 1300,
+        ),
+        Variant(
+          id: 2,
+          name: 'RGG',
+          price: 970,
+          amount: 650,
+        ),
+        Variant(
+          id: 3,
+          name: 'RGG',
+          price: 450,
+          amount: 300,
+        ),
+        Variant(
+          id: 4,
+          name: 'RGG',
+          price: 290,
+          amount: 180,
+        ),
+        Variant(
+          id: 5,
+          name: 'RGG',
+          price: 150,
+          amount: 90,
+        ),
+      ],
     ),
-  );
+    ProductModel(
+      id: 3,
+      name: 'Unipin UC',
+      image: 'https://cdn.unipin.com/images/unipin-dark-og.png',
+      description:
+          'Smile Coin is a region locked product. It is only valid for Garena account registered in the region of MALAYSIA. All purchases are NON-REFUNDABLE and NON-RETURNABLE.',
+      variants: [
+        Variant(
+          id: 1,
+          name: 'UC',
+          price: 1920,
+          amount: 1300,
+        ),
+        Variant(
+          id: 2,
+          name: 'UC',
+          price: 970,
+          amount: 650,
+        ),
+      ],
+    ),
+    ProductModel(
+      id: 4,
+      name: 'Smile Coin',
+      image:
+          'https://static.wikia.nocookie.net/infectious-smile/images/9/97/SmileCoinTrans.png/revision/latest?cb=20230712231154',
+      description:
+          'Smile Coin is a region locked product. It is only valid for Garena account registered in the region of MALAYSIA. All purchases are NON-REFUNDABLE and NON-RETURNABLE.',
+      variants: [
+        Variant(
+          id: 1,
+          name: 'coin',
+          price: 1500,
+          amount: 5999,
+        ),
+        Variant(
+          id: 2,
+          name: 'coin',
+          price: 750,
+          amount: 2999,
+        ),
+      ],
+    ),
+    ProductModel(
+      id: 5,
+      name: 'Unipin UC',
+      image: 'https://cdn.unipin.com/images/unipin-dark-og.png',
+      description:
+          'Smile Coin is a region locked product. It is only valid for Garena account registered in the region of MALAYSIA. All purchases are NON-REFUNDABLE and NON-RETURNABLE.',
+      variants: [
+        Variant(
+          id: 1,
+          name: 'UC',
+          price: 1920,
+          amount: 1300,
+        ),
+        Variant(
+          id: 2,
+          name: 'UC',
+          price: 970,
+          amount: 650,
+        ),
+      ],
+    ),
+    ProductModel(
+      id: 6,
+      name: 'Unipin UC',
+      image: 'https://cdn.unipin.com/images/unipin-dark-og.png',
+      description:
+          'Smile Coin is a region locked product. It is only valid for Garena account registered in the region of MALAYSIA. All purchases are NON-REFUNDABLE and NON-RETURNABLE.',
+      variants: [
+        Variant(
+          id: 1,
+          name: 'UC',
+          price: 1920,
+          amount: 1300,
+        ),
+        Variant(
+          id: 2,
+          name: 'UC',
+          price: 970,
+          amount: 650,
+        ),
+      ],
+    ),
+    ProductModel(
+      id: 7,
+      name: 'Unipin UC',
+      image: 'https://cdn.unipin.com/images/unipin-dark-og.png',
+      description:
+          'Smile Coin is a region locked product. It is only valid for Garena account registered in the region of MALAYSIA. All purchases are NON-REFUNDABLE and NON-RETURNABLE.',
+      variants: [
+        Variant(
+          id: 1,
+          name: 'UC',
+          price: 1920,
+          amount: 1300,
+        ),
+        Variant(
+          id: 2,
+          name: 'UC',
+          price: 970,
+          amount: 650,
+        ),
+      ],
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +236,22 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              // Add your cart button functionality here
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CartScreen()),
+              );
+            },
+          ),
+          // Add the item indicator widget here
+        ],
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -95,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }).toList(),
               options: CarouselOptions(
-                height: 200,
+                height: 150,
                 aspectRatio: 1 / 1,
                 initialPage: 0,
                 enableInfiniteScroll: true,
@@ -111,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             const SizedBox(
-              height: 30,
+              height: 20,
             ),
             // Container(
             //   height: 80,
@@ -157,10 +334,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        "Popular Games",
+                        "Popular Items",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                       TextButton(
@@ -177,15 +355,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            color: Colors.amber,
                           ),
                         ),
                       ),
                     ])),
-            ProductCardWidget(product: product),
-            ProductCardWidget(product: product2),
-            for (int i = 0; i < 100; i++) ProductCardWidget(product: product2),
-            const SizedBox(
-              height: 10,
+            GridView.builder(
+              padding: const EdgeInsets.all(8.0),
+              shrinkWrap: true,
+              physics:
+                  const NeverScrollableScrollPhysics(), // to avoid conflict with SingleChildScrollView
+              itemCount: products.length,
+              // itemCount: 8,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Two items per row
+                crossAxisSpacing: 5.0,
+                mainAxisSpacing: 20.0,
+                childAspectRatio: 6 / 7, // Adjust to fit card's aspect ratio
+              ),
+              itemBuilder: (context, index) {
+                return ProductCardWidget(product: products[index]);
+              },
             ),
           ],
         ),

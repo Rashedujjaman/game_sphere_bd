@@ -32,8 +32,8 @@ class ProductCardWidget extends StatelessWidget {
               child: Image.network(
                 product.image,
                 fit: BoxFit.cover,
-                width: double.infinity,
-                height: 200,
+                width: MediaQuery.of(context).size.width,
+                height: 120,
               ),
             ),
             Padding(

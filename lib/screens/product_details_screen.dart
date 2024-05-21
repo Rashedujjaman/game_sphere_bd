@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:game_sphere_bd/models/product.dart';
+import 'package:game_sphere_bd/models/variant.dart';
+import 'package:game_sphere_bd/screens/cart_screen.dart';
 
-class ProductDetailsScreen extends StatelessWidget {
+class ProductDetailsScreen extends StatefulWidget {
   final ProductModel product;
 
   const ProductDetailsScreen({Key? key, required this.product})
       : super(key: key);
+
+  @override
+  _ProductDetailsScreenState createState() => _ProductDetailsScreenState();
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  late Variant _selectedVariant;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedVariant =
+        widget.product.variants[0]; // Set the initial selected variant
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +35,12 @@ class ProductDetailsScreen extends StatelessWidget {
               height: 350,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(product.image),
+                  image: NetworkImage(widget.product.image),
                   fit: BoxFit.cover,
                 ),
               ),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                padding: const EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -71,7 +86,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.name,
+                    widget.product.name,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -80,7 +95,7 @@ class ProductDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    product.description,
+                    widget.product.description,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -88,37 +103,116 @@ class ProductDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Row(
-                    children: [
-                      const Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                      ),
-                      Text(
-                        '${product.rating} (${product.rating} reviews)',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                    children: List.generate(5, (index) {
+                      // Calculate the rating to determine how many full/half stars to display
+                      int fullStars =
+                          widget.product.rating.floor(); // Get the integer part
+                      double remaining = widget.product.rating -
+                          fullStars; // Get the decimal part
+
+                      if (index < fullStars) {
+                        // Display full stars
+                        return const Icon(
+                          Icons.star,
+                          color: Colors.yellow,
+                        );
+                      } else if (index == fullStars && remaining > 0) {
+                        // Display half star for ratings like 2.5, 3.5, 4.5
+                        return const Icon(
+                          Icons.star_half,
+                          color: Colors.yellow,
+                        );
+                      } else {
+                        // Display empty stars for remaining positions
+                        return const Icon(
+                          Icons.star_border,
+                          color: Colors.yellow,
+                        );
+                      }
+                    }),
                   ),
-                  const SizedBox(width: 8),
-                  //display variant details
-                  const Text(
-                    'Variants',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Text(
+                      'Variants:',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
+                  Center(
+                    child: DropdownButton<Variant>(
+                      // This is the dropdown button
+                      style: const TextStyle(fontSize: 16, color: Colors.white),
+                      iconEnabledColor: Colors.white,
+                      dropdownColor: Color.fromARGB(255, 130, 214, 214),
+                      value: _selectedVariant,
+                      items: widget.product.variants.map((Variant variant) {
+                        return DropdownMenuItem<Variant>(
+                          value: variant,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * .8,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: const BoxDecoration(),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${variant.amount} ${variant.name}',
+                                  style: const TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                                Text(
+                                  '${variant.price.toStringAsFixed(0)} ৳',
+                                  style: const TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (Variant? selectedVariant) {
+                        if (selectedVariant != null) {
+                          setState(() {
+                            _selectedVariant = selectedVariant;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: ElevatedButton(
+                      // This is the Add to Cart button
+                      onPressed: () {
+                        // Add your purchase functionality here
+                        // link to cart screen
 
-                  const SizedBox(width: 8),
-                  //display variant details
-                  Text(
-                    product.variant.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CartScreen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.amber,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text(
+                        'Add to Cart',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],

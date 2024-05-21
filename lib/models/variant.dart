@@ -18,4 +18,6 @@ class Variant {
       amount: json['amount'],
     );
   }
+
+  num? get length => null;
 }

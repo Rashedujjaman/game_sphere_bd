@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "571743572931",
+    "project_id": "game-sphere-bd",
+    "storage_bucket": "game-sphere-bd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571743572931:android:21ef0a613db43ac4112376",
+        "android_client_info": {
+          "package_name": "com.example.game_sphere_bd"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_WZIDYVEZRtPidaM1d3vXPtQjL5_dLaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

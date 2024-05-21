@@ -1,5 +1,6 @@
+
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.9.24'
     repositories {
         google()
         mavenCentral()
@@ -7,6 +8,9 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.4.1'
+        // You may need to use a newer version of google-services plugin
+        // classpath 'com.google.gms:google-services:4.3.10' 
     }
 }
 
@@ -28,3 +32,56 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+
+
+
+
+
+
+
+
+
+// buildscript {
+//     ext.kotlin_version = '1.7.10'
+//     repositories {
+//         google()
+//         mavenCentral()
+        
+//     }
+
+//     dependencies {
+//         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+//         implementation platform('com.google.firebase:firebase-bom:33.0.0')
+//         // TODO: Add the dependencies for Firebase products you want to use
+//         // When using the BoM, don't specify versions in Firebase dependencies
+//         implementation 'com.google.firebase:firebase-analytics'
+//         // implementation 'com.android.support:multidex:1.0.3'
+//         // Add the dependencies for any other desired Firebase products
+//         // https://firebase.google.com/docs/android/setup#available-libraries
+
+//     }
+// }
+
+// plugins {
+//     id 'com.google.gms.google-services' version '4.4.1' apply false
+// }
+
+// allprojects {
+//     repositories {
+//         google()
+//         mavenCentral()
+//     }
+// }
+
+// rootProject.buildDir = '../build'
+// subprojects {
+//     project.buildDir = "${rootProject.buildDir}/${project.name}"
+// }
+// subprojects {
+//     project.evaluationDependsOn(':app')
+// }
+
+// tasks.register("clean", Delete) {
+//     delete rootProject.buildDir
+// }

@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:game_sphere_bd/constants.dart';
 import 'package:game_sphere_bd/screens/home_screen.dart';
+import 'package:game_sphere_bd/screens/register_screen.dart';
 import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
@@ -44,13 +44,12 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Login',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                //Logo of the app
+                const SizedBox(height: 0.0),
+                Image.asset(
+                  'assets/images/logo.png',
+                  width: 400,
+                  height: 100,
                 ),
                 const SizedBox(height: 24.0),
                 TextFormField(
@@ -95,19 +94,45 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
+                      backgroundColor: Colors.amber,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
                     child: const Text(
-                      'Login',
+                      'Sign In',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24.0),
+                const SizedBox(height: 10.0),
+                SizedBox(
+                  width: double.infinity, // Button width spans full width
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return const RegisterScreen();
+                      }));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      //add margin color to amber
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      side: BorderSide(color: Colors.amber, width: 1),
+                    ),
+                    child: const Text(
+                      'Sign Up',
+                      style: TextStyle(fontSize: 16, color: Colors.amber),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
                 TextButton(
                   onPressed: () {
                     // TODO: Implement forgot password functionality
@@ -118,15 +143,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 8.0),
-                TextButton(
-                  onPressed: () {
-                    // TODO: Implement registration functionality
-                  },
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
               ],
             ),
           ),
@@ -135,33 +151,12 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // void _login() {
-  //   final username = _usernameController.text;
-  //   final password = _passwordController.text;
-
-  //   //submit the form to the server
-
-  //   if (username == 'admin' && password == 'admin') {
-  //     Navigator.push(context, MaterialPageRoute(builder: (context) {
-  //       return const HomeScreen();
-  //     }));
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         backgroundColor: Colors.red,
-  //         content: Text('Invalid username or password',
-  //             style: TextStyle(color: Colors.white)),
-  //       ),
-  //     );
-  //   }
-  // }
-
   void _login() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
 
-    // Your server URL
-    final String url = '${serverUrl}login.php';
+    // Replace 'your_php_login_endpoint' with your actual PHP login endpoint
+    String url = "${serverUrl}login.php";
 
     // Create a map with your username and password
     final Map<String, dynamic> requestData = {
@@ -180,14 +175,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        final bool status = responseData['success'];
+        final bool success = responseData['success'];
         final String message = responseData['message'];
 
-        if (status) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const HomeScreen();
-          }));
+        if (success) {
+          // Handle successful login
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
         } else {
+          // Handle login failure
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.red,
@@ -199,19 +197,32 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
       } else {
-        // Invalid credentials or other server error
+        // Handle server errors or unexpected response
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.red,
             content: Text(
-              'Invalid username or password',
+              'Failed to connect to the server',
               style: TextStyle(color: Colors.white),
             ),
           ),
         );
       }
+      // } catch (e) {
+      //   // Handle network errors or exceptions
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       backgroundColor: Colors.red,
+      //       content: Text(
+      //         'Something went wrong',
+      //         style: TextStyle(color: Colors.white),
+      //       ),
+      //     ),
+      //   );
+      // }
     } catch (e) {
-      // Server unreachable or other server error
+      // Handle network errors or exceptions
+      print('Error: $e'); // Add this line to print the error message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.red,

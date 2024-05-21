@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:game_sphere_bd/models/promotion.dart';
-import 'package:game_sphere_bd/widgets/menu_drawer.dart';
 
 class CategoeryScreen extends StatefulWidget {
   const CategoeryScreen({Key? key}) : super(key: key);
