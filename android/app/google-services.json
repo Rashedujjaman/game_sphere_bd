@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "571743572931",
-    "project_id": "game-sphere-bd",
-    "storage_bucket": "game-sphere-bd.appspot.com"
+    "project_number": "782465918457",
+    "project_id": "game-sphere-bd-a9cd8",
+    "storage_bucket": "game-sphere-bd-a9cd8.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:571743572931:android:21ef0a613db43ac4112376",
+        "mobilesdk_app_id": "1:782465918457:android:7610e8c1c3a58bd06d8928",
         "android_client_info": {
           "package_name": "com.example.game_sphere_bd"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA_WZIDYVEZRtPidaM1d3vXPtQjL5_dLaM"
+          "current_key": "AIzaSyAL5z_jSaYIqC9Tw_xsGgTL38QWEJpGK6w"
         }
       ],
       "services": {

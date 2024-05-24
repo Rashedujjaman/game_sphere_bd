@@ -383,21 +383,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return const SizedBox(
-          height: 200,
-          // Customize the bottom sheet content here
-          child: Center(
-            child: Text(
-              'Your Bottom Sheet Content go',
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // void _showBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return const SizedBox(
+  //         height: 200,
+  //         // Customize the bottom sheet content here
+  //         child: Center(
+  //           child: Text(
+  //             'Your Bottom Sheet Content go',
+  //             style: TextStyle(fontSize: 20),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }

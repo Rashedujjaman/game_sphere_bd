@@ -1,4 +1,9 @@
+import 'dart:io'; // Import for File
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -9,24 +14,108 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  User? _user;
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  // Text controllers for user data fields
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
-  String image = "assets/images/Reza.jpg";
-
-  void _updateProfile() {
-    // Implement logic to update profile information
-  }
+  // Image-related variables
+  File? _imageFile; // Store the selected image file
+  String imageUrl = ""; // Store the image URL from Firestore
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _userNameController.dispose();
-    _mobileController.dispose();
-    _emailController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _user = _auth.currentUser;
+    print(_storage.bucket); // Print the bucket name (optional)
+    _loadUserData(); // Load the user's data when the screen initializes
+  }
+
+  // Function to load user data from Firestore
+  Future<void> _loadUserData() async {
+    if (_user != null) {
+      DocumentSnapshot userSnapshot =
+          await _firestore.collection('Customers').doc(_user!.uid).get();
+      if (userSnapshot.exists) {
+        setState(() {
+          _nameController.text = userSnapshot['fullName'];
+          _userNameController.text = userSnapshot['username'];
+          _mobileController.text = userSnapshot['mobileNo'];
+          _emailController.text = userSnapshot['email'];
+          imageUrl = userSnapshot['imageUrl']; // Get existing image URL
+        });
+      }
+    }
+  }
+
+  Future<void> _updateProfile() async {
+    setState(() => _isLoading = true);
+    if (_formKey.currentState!.validate()) {
+      try {
+        // ... your existing form validation logic ...
+
+        if (_imageFile != null) {
+          // Upload the new image to Firebase Storage if one is selected
+          final ref =
+              _storage.ref().child('user_profiles').child('${_user!.uid}.jpg');
+          await ref.putFile(_imageFile!);
+          imageUrl = await ref.getDownloadURL(); // Get the new image URL
+        }
+
+        // Update the user data in Firestore
+        await _firestore.collection('Customers').doc(_user!.uid).update({
+          'fullName': _nameController.text,
+          'username': _userNameController.text,
+          'mobileNo': _mobileController.text,
+          'email': _emailController.text,
+          'imageUrl': imageUrl, // Update the imageUrl if changed
+        });
+
+        // Show a success message (you can customize this)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green),
+                  SizedBox(width: 8),
+                  Text('Profile updated successfully'),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        Navigator.pop(context); // Go back to the profile screen
+      } catch (e) {
+        // ... (your error handling)
+      }
+      setState(() => _isLoading = false);
+    }
+  }
+
+  // Function to pick an image from the gallery or camera
+  Future<void> _pickImage() async {
+    try {
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+    }
   }
 
   @override
@@ -43,109 +132,115 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           color: Colors.white, // Set color of back button
         ),
       ),
-      body: Container(
-        height: double.infinity,
-        padding: const EdgeInsets.all(16.0),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF62BDBD), Color(0xFF438D8D)],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.transparent,
-                child: ClipOval(
-                  child: Image(
-                    image: AssetImage(image),
-                    fit: BoxFit.cover, // Set the fit property to BoxFit.cover
-                    // width: 100, // Set the width of the image
-                    // height: 100, // Set the height of the image
-                  ),
-                ),
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF62BDBD), Color(0xFF438D8D)],
               ),
-              Positioned(
-                bottom: 30,
-                right: 30,
-                child: GestureDetector(
-                  onTap: () {
-                    // Handle edit image button press
-                    // Add your logic here to edit the image
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      // Decreased the radius to make the circle smaller
-                      color: Colors.white,
+            ),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor:
+                              Colors.white, // Avatar background color
+                          backgroundImage: _imageFile != null
+                              ? FileImage(_imageFile!)
+                              : (imageUrl.isNotEmpty
+                                  ? NetworkImage(imageUrl) as ImageProvider?
+                                  : null), // Use null if no image
+                          child: _imageFile == null && imageUrl.isEmpty
+                              ? // Avatar background color
+                              const Icon(
+                                  Icons.person,
+                                  color: Color(0xFF62BDBD), // Icon color
+                                  size: 80,
+                                )
+                              : null,
+                        ),
+                        Positioned(
+                          bottom: 70,
+                          right: 90,
+                          child: GestureDetector(
+                            onTap: _pickImage,
+                            child: const Icon(
+                              Icons.change_circle,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: const Icon(
-                      Icons.edit,
-                      color: Color(0xFF62BDBD),
-                      size: 14,
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _userNameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _mobileController,
+                      decoration: const InputDecoration(
+                        labelText: 'Mobile Number',
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                    const SizedBox(height: 80),
+                    ElevatedButton(
+                      onPressed: _updateProfile,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(
+                            255, 255, 255, 255), // Change button color here
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        textStyle: const TextStyle(fontSize: 20),
+                      ),
+                      child: const Text(
+                        'Save Changes',
+                        style: TextStyle(
+                            color: Color(0xFF62BDBD)), // Text color of Button
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    if (_isLoading)
+                      const Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ), // Loading indicator
+                      ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _userNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _mobileController,
-                decoration: const InputDecoration(
-                  labelText: 'Mobile Number',
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-              ),
-              const SizedBox(height: 80),
-              ElevatedButton(
-                onPressed: _updateProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(
-                      255, 255, 255, 255), // Change button color here
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                child: const Text(
-                  'Save Changes',
-                  style: TextStyle(
-                      color: Color(0xFF62BDBD)), // Change text color here
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

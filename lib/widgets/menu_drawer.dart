@@ -7,20 +7,34 @@ import 'package:game_sphere_bd/screens/order_screen.dart';
 import 'package:game_sphere_bd/screens/profile.dart';
 import 'package:game_sphere_bd/screens/reward_center_screen.dart';
 import 'package:game_sphere_bd/screens/wishlist_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
+  @override
+  _CustomDrawerState createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
   bool userLoggedIn = true;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? _user;
 
+  @override
+  void initState() {
+    super.initState();
+    _user = _auth.currentUser; // Geting the current user
+  }
+
+  // Perform logout operations here (e.g., clearing user data, resetting authentication status)
+  // Example: Clear user session, navigate to login screen
+  // Replace the logic below with your actual logout logic
   void logoutUser(BuildContext context) {
-    // Perform logout operations here (e.g., clearing user data, resetting authentication status)
-    // Example: Clear user session, navigate to login screen
-    // Replace the logic below with your actual logout logic
-
-    userLoggedIn = false;
-
+    _auth.signOut();
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
       (route) => false, // Clear all previous routes from the stack
     );
   }
@@ -28,126 +42,227 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Color(0xFF62BDBD),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: AssetImage('assets/images/Reza.jpg'),
+        child: _user != null
+            ? StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Customers')
+                    .doc(_user!.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                        child: Text("Error fetching user data"));
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    );
+                  } else {
+                    // Extracting user data from the snapshot
+                    var userData =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    String name = userData['fullName'] ?? "N/A";
+                    // int rewardPoint = userData['rewardPoint'] ?? 0;
+                    String imageUrl = userData['imageUrl'] ?? "";
+
+                    return ListView(
+                      padding: EdgeInsets.zero,
+                      children: <Widget>[
+                        DrawerHeader(
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF62BDBD),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 40,
+                                backgroundImage: imageUrl.isNotEmpty
+                                    ? NetworkImage(imageUrl)
+                                    : null,
+                                backgroundColor: imageUrl.isEmpty
+                                    ? const Color.fromARGB(255, 255, 255, 255)
+                                    : null,
+                                child: imageUrl.isNotEmpty
+                                    ? null
+                                    : const Icon(Icons.person,
+                                        color: Color(0xFF62BDBD),
+                                        size:
+                                            50), // Size adjusted for visibility
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                name,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.account_circle),
+                          title: const Text('Profile'),
+                          onTap: () {
+                            // Handle tapping the Profile menu item
+                            //connect to profile page
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ProfileScreen()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.history),
+                          title: const Text('Orders'),
+                          onTap: () {
+                            // Handle tapping the Orders menu item
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OrderHistoryScreen()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.shopping_cart),
+                          title: const Text('Cart'),
+                          onTap: () {
+                            // Handle tapping the Orders menu item
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CartScreen()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.favorite),
+                          title: const Text('Wishlist'),
+                          onTap: () {
+                            // Handle tapping the Wishlist menu item
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WishlistScreen()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.card_giftcard),
+                          title: const Text('Reward Center'),
+                          onTap: () {
+                            // Handle tapping the Reward Center menu item
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RewardCenterScreen()),
+                            );
+                          },
+                        ),
+                        //make a bulk order button
+                        ListTile(
+                          leading: const Icon(Icons.shopping_basket),
+                          title: const Text('Bulk Order'),
+                          onTap: () {
+                            // Handle tapping the Reward Center menu item
+                            //connect to bulk order screen
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BulkOrderFormScreen()),
+                            );
+                          },
+                        ),
+
+                        ListTile(
+                          leading: const Icon(Icons.info),
+                          title: const Text('About us'),
+                          onTap: () {
+                            // Handle tapping the About us menu item
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AboutUsScreen()),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        // logout or login button that will be shown conditionally based on user login status;
+                        if (userLoggedIn)
+                          ListTile(
+                            leading: const Icon(Icons.logout),
+                            title: const Text('Logout'),
+                            onTap: () {
+                              logoutUser(context);
+                            },
+                          ),
+                      ],
+                    );
+                  }
+                })
+            : Container(
+                color: Colors.white,
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    const DrawerHeader(
+                        decoration: BoxDecoration(
+                          color: Color(0xFF62BDBD),
+                        ),
+                        // child: SizedBox.shrink(),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 40,
+                                backgroundColor: Color(
+                                    0xFF62BDBD), // Avatar background color
+                                child: CircleAvatar(
+                                  // Inner circle for the Icon
+                                  radius:
+                                      38, // Slightly smaller to create the border
+                                  backgroundColor: Colors.white, // Border color
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Color(0xFF62BDBD), // Icon color
+                                    size: 50,
+                                  ),
+                                ),
+                              ),
+                            ])), // Empty header to match logged-in state
+                    ListTile(
+                      leading: const Icon(Icons.info),
+                      title: const Text('About us'),
+                      onTap: () {
+                        // Handle tapping the About us menu item
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AboutUsScreen()),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    ListTile(
+                      leading: const Icon(Icons.login),
+                      title: const Text("Login"), // White text
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginScreen()));
+                      },
+                    ),
+                  ],
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'MD Rashedujjan Reza',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.account_circle),
-            title: const Text('Profile'),
-            onTap: () {
-              // Handle tapping the Profile menu item
-              //connect to profile page
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfileScreen()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: const Text('Orders'),
-            onTap: () {
-              // Handle tapping the Orders menu item
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => OrderHistoryScreen()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.shopping_cart),
-            title: const Text('Cart'),
-            onTap: () {
-              // Handle tapping the Orders menu item
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CartScreen()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.favorite),
-            title: const Text('Wishlist'),
-            onTap: () {
-              // Handle tapping the Wishlist menu item
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => WishlistScreen()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.card_giftcard),
-            title: const Text('Reward Center'),
-            onTap: () {
-              // Handle tapping the Reward Center menu item
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RewardCenterScreen()),
-              );
-            },
-          ),
-          //make a bulk order button
-          ListTile(
-            leading: const Icon(Icons.shopping_basket),
-            title: const Text('Bulk Order'),
-            onTap: () {
-              // Handle tapping the Reward Center menu item
-              //connect to bulk order screen
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => BulkOrderFormScreen()),
-              );
-            },
-          ),
-
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text('About us'),
-            onTap: () {
-              // Handle tapping the About us menu item
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AboutUsScreen()),
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          //logout or login button that will be shown conditionally based on user login status;
-          if (userLoggedIn)
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () {
-                logoutUser(context);
-              },
-            ),
-        ],
-      ),
-    );
+              ));
   }
 }
