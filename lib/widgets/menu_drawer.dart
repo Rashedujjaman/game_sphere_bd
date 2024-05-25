@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:game_sphere_bd/screens/aboutus_screen.dart';
 import 'package:game_sphere_bd/screens/bulkorder_screen.dart';
@@ -9,7 +10,6 @@ import 'package:game_sphere_bd/screens/reward_center_screen.dart';
 import 'package:game_sphere_bd/screens/wishlist_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:image_picker/image_picker.dart';
 
 class CustomDrawer extends StatefulWidget {
   @override
@@ -80,7 +80,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               CircleAvatar(
                                 radius: 40,
                                 backgroundImage: imageUrl.isNotEmpty
-                                    ? NetworkImage(imageUrl)
+                                    ? CachedNetworkImageProvider(imageUrl)
                                     : null,
                                 backgroundColor: imageUrl.isEmpty
                                     ? const Color.fromARGB(255, 255, 255, 255)

@@ -1,37 +1,39 @@
 import 'package:game_sphere_bd/models/variant.dart';
 
 class ProductModel {
-  int id;
+  String id;
   String name;
   String description;
-  String image;
-  double rating = 4.5;
-  List<Variant> variants;
+  String imageUrl;
+  double rating;
+  List<Variant> variant;
 
   ProductModel({
     required this.id,
     required this.name,
     required this.description,
-    required this.image,
-    required this.variants,
+    required this.imageUrl,
+    required this.variant,
+    required this.rating,
   });
 
-  ProductModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        description = json['description'],
-        image = json['image'],
-        variants = (json['variants'] as List<dynamic>)
-            .map((variantJson) => Variant.fromJson(variantJson))
-            .toList();
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'image': image,
-      'variants': variants,
-    };
+  factory ProductModel.fromFirestore(String id, Map<String, dynamic> data) {
+    if (!data.containsKey('name') ||
+        !data.containsKey('imageUrl') ||
+        !data.containsKey('variant')) {
+      throw ArgumentError(
+          'Product data is missing required fields'); // Or provide default values
+    }
+    return ProductModel(
+      id: id, // Use the 'id' parameter passed to the constructor
+      name: data['name'],
+      imageUrl: data['imageUrl'],
+      description: data['description'],
+      rating: double.tryParse(data['rating'].toString()) ?? 0.0,
+      variant: (data['variant'] as Map<String, dynamic>)
+          .entries
+          .map((entry) => Variant.fromMap(entry.key, entry.value))
+          .toList(),
+    );
   }
 }

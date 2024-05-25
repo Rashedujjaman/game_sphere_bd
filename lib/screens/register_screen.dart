@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -42,7 +40,6 @@ class _RegistrationScreenState extends State<RegisterScreen> {
     final String mobileNo = _mobileNoController.text;
     final String email = _emailController.text;
     final String password = _passwordController.text;
-    final String confirmPassword = _confirmPasswordController.text;
 
     setState(() => _isLoading = true);
     if (_formKey.currentState!.validate()) {

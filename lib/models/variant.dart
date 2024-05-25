@@ -1,21 +1,22 @@
 class Variant {
-  final int id;
+  final String id;
   final String name;
   final double price;
-  final int amount;
+  final double amount;
 
   Variant(
       {required this.id,
       required this.name,
       required this.price,
       required this.amount});
-
-  factory Variant.fromJson(Map<String, dynamic> json) {
+  factory Variant.fromMap(String variantId, Map<String, dynamic> variantMap) {
     return Variant(
-      id: json['id'],
-      name: json['name'],
-      price: json['price'],
-      amount: json['amount'],
+      id: variantId,
+      name: variantMap['name'],
+      price: double.tryParse(variantMap['price'].toString()) ??
+          0.0, // Parse to double
+      amount: double.tryParse(variantMap['amount'].toString()) ??
+          0.0, // Parse to double
     );
   }
 

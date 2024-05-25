@@ -20,7 +20,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void initState() {
     super.initState();
     _selectedVariant =
-        widget.product.variants[0]; // Set the initial selected variant
+        widget.product.variant[0]; // Set the initial selected variant
   }
 
   @override
@@ -34,8 +34,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             Container(
               height: 350,
               decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
                 image: DecorationImage(
-                  image: NetworkImage(widget.product.image),
+                  image: NetworkImage(widget.product.imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -149,7 +150,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       iconEnabledColor: Colors.white,
                       dropdownColor: Color.fromARGB(255, 130, 214, 214),
                       value: _selectedVariant,
-                      items: widget.product.variants.map((Variant variant) {
+                      items: widget.product.variant.map((Variant variant) {
                         return DropdownMenuItem<Variant>(
                           value: variant,
                           child: Container(
@@ -160,7 +161,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  '${variant.amount} ${variant.name}',
+                                  '${variant.amount.toInt()} ${variant.name}',
                                   style: const TextStyle(
                                       fontSize: 16, color: Colors.white),
                                 ),

@@ -20,6 +20,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   User? _user;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  String? _selectedGender;
 
   // Text controllers for user data fields
   final TextEditingController _nameController = TextEditingController();
@@ -50,7 +51,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _userNameController.text = userSnapshot['username'];
           _mobileController.text = userSnapshot['mobileNo'];
           _emailController.text = userSnapshot['email'];
-          imageUrl = userSnapshot['imageUrl']; // Get existing image URL
+          imageUrl = userSnapshot['imageUrl'];
+          _selectedGender = userSnapshot['gender']; // Get existing image URL
         });
       }
     }
@@ -76,7 +78,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'username': _userNameController.text,
           'mobileNo': _mobileController.text,
           'email': _emailController.text,
-          'imageUrl': imageUrl, // Update the imageUrl if changed
+          'imageUrl': imageUrl,
+          'gender': _selectedGender, // Update the imageUrl if changed
         });
 
         // Show a success message (you can customize this)
@@ -172,14 +175,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               : null,
                         ),
                         Positioned(
-                          bottom: 70,
-                          right: 90,
+                          bottom: 5,
+                          right: 115,
                           child: GestureDetector(
                             onTap: _pickImage,
-                            child: const Icon(
-                              Icons.change_circle,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              size: 30,
+                            child: Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color(0xFF62BDBD),
+                                border: Border.all(
+                                    color: const Color.fromARGB(
+                                        255, 255, 255, 255)!,
+                                    width: 1), // Add a grey border
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                size: 15,
+                              ),
                             ),
                           ),
                         ),
@@ -212,19 +226,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         filled: true,
                       ),
                     ),
+                    const SizedBox(height: 20),
+                    Container(
+                      width: double.infinity,
+                      child: DropdownButtonFormField<String>(
+                        value: _selectedGender,
+                        decoration: const InputDecoration(
+                          labelText: 'Gender',
+                          fillColor: Colors.white,
+                          filled: true,
+                        ),
+                        items: <String>['Male', 'Female']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedGender = newValue;
+                          });
+                        },
+                      ),
+                    ),
                     const SizedBox(height: 80),
                     ElevatedButton(
                       onPressed: _updateProfile,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(
-                            255, 255, 255, 255), // Change button color here
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        textStyle: const TextStyle(fontSize: 20),
-                      ),
+                          backgroundColor:
+                              Colors.amber, // Change button color here
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          textStyle: const TextStyle(fontSize: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                          )),
                       child: const Text(
-                        'Save Changes',
+                        'Save',
                         style: TextStyle(
-                            color: Color(0xFF62BDBD)), // Text color of Button
+                            color: Color.fromARGB(
+                                255, 255, 255, 255)), // Text color of Button
                       ),
                     ),
                     const SizedBox(height: 20),

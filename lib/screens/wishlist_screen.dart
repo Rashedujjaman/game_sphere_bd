@@ -6,38 +6,39 @@ import 'package:game_sphere_bd/widgets/product_card_widget.dart';
 class WishlistScreen extends StatelessWidget {
   final List<ProductModel> wishlistProducts = [
     ProductModel(
-      id: 1,
+      id: '1',
       name: 'Garena Shell',
-      image: 'https://image.offgamers.com/infolink/2023/05/garena-tw.jpg',
+      imageUrl: 'https://image.offgamers.com/infolink/2023/05/garena-tw.jpg',
+      rating: 4.5,
       description:
           'Garena Shells Code (Malaysia) sold by SEAGM is a region locked product. It is only valid for Garena account registered in the region of MALAYSIA. All purchases are NON-REFUNDABLE and NON-RETURNABLE.',
-      variants: [
+      variant: [
         Variant(
-          id: 1,
+          id: '1',
           name: 'Shell',
           price: 1920,
           amount: 1300,
         ),
         Variant(
-          id: 2,
+          id: '2',
           name: 'Shell',
           price: 970,
           amount: 650,
         ),
         Variant(
-          id: 3,
+          id: '3',
           name: 'Shell',
           price: 450,
           amount: 300,
         ),
         Variant(
-          id: 4,
+          id: '4',
           name: 'Shell',
           price: 290,
           amount: 180,
         ),
         Variant(
-          id: 5,
+          id: '5',
           name: 'Shell',
           price: 150,
           amount: 90,
