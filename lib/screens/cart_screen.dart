@@ -1,152 +1,231 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:game_sphere_bd/models/cart_item.dart';
+import 'package:game_sphere_bd/screens/home_screen.dart';
 import 'package:game_sphere_bd/screens/payment_screen.dart';
+import 'package:game_sphere_bd/widgets/cart_item_card_widget.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({Key? key}) : super(key: key);
-
+  const CartScreen({super.key});
   @override
+  // ignore: library_private_types_in_public_api
   _CartScreenState createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-  late int quantity; // Declare quantity as a state variable
-  List<String> cartItems = ['Garena Shell'];
+  List<CartItem> cartItems = [];
+  final user = FirebaseAuth.instance.currentUser;
+  double total = 0.0;
 
   @override
   void initState() {
     super.initState();
-    quantity = 1; // Initialize quantity in initState
+    _fetchCartItems();
+    _calculateTotal();
   }
 
-  void removeFromCart(int index) {
+  void _removeFromCart(String cartItemId) async {
+    try {
+      // Remove the cart item from Firestore
+      await FirebaseFirestore.instance
+          .collection('carts')
+          .doc(cartItemId)
+          .delete();
+
+      // Update the cartItems list
+      setState(() {
+        cartItems.removeWhere((item) => item.id == cartItemId);
+      });
+    } catch (e) {
+      print('Error removing item from cart: $e');
+      // Handle the error (e.g., show a SnackBar to the user)
+    }
+  }
+
+  Future<void> _fetchCartItems() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final cartQuerySnapshot = await FirebaseFirestore.instance
+            .collection('carts')
+            .where('uid', isEqualTo: user.uid)
+            .get();
+
+        List<CartItem> fetchedCartItems = [];
+
+        for (var cartDoc in cartQuerySnapshot.docs) {
+          final cartData = cartDoc.data();
+          final productId = cartData['productId'] as String;
+          final variantId = cartData['variantId'] as String;
+          final quantity = cartData['quantity'] as int;
+
+          // Fetch the product document
+          final productDoc = await FirebaseFirestore.instance
+              .collection('products')
+              .doc(productId)
+              .get();
+
+          // Check if product exists and variant exists
+          if (productDoc.exists && productDoc.data()!.containsKey('variant')) {
+            final productData = productDoc.data() as Map<String, dynamic>;
+            final variantData = productData['variant'][variantId];
+
+            if (variantData != null) {
+              fetchedCartItems.add(CartItem(
+                id: cartDoc.id,
+                productId: productId,
+                productName: productData['name'],
+                productImage: productData['imageUrl'],
+                variantId: variantId,
+                variantName: variantData['name'],
+                price: (variantData['price'] as num).toDouble(),
+                quantity: quantity,
+                variantAmount: variantData['amount'],
+              ));
+            } else {
+              print(
+                  'Error: Variant with ID $variantId not found in product $productId');
+            }
+          } else {
+            print('Error: Product with ID $productId not found');
+          }
+        }
+
+        setState(() {
+          cartItems = fetchedCartItems;
+        });
+
+        // Calculate total after fetching cart items
+        _calculateTotal();
+      } else {
+        // Handle the case where the user is not logged in
+        print("User not logged in");
+      }
+    } catch (error) {
+      // Handle errors with the Firestore query itself
+      print("Error fetching cart items from Firestore: $error");
+      // Optionally, show a SnackBar or an error dialog to the user
+    }
+  }
+
+  void _calculateTotal() {
     setState(() {
-      cartItems.removeAt(index);
+      total =
+          cartItems.fold(0.0, (sum, item) => sum + item.price * item.quantity);
     });
+  }
+
+  void _updateQuantity(String cartItemId, int newQuantity) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('carts')
+          .doc(cartItemId)
+          .update({'quantity': newQuantity});
+
+      _fetchCartItems(); // Refresh cart items after updating quantity
+    } catch (e) {
+      print('Error updating quantity: $e');
+      // Show an error message to the user
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    int price = 1920;
-    int total = (price * quantity);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cart', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF62BDBD),
         elevation: 1,
-        iconTheme: const IconThemeData(
-            color: Colors.white), // Add this line to change the icon color
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: ListView.builder(
-        itemCount: cartItems
-            .length, // Replace with the actual number of items in the cart
-        itemBuilder: (ctx, index) {
-          return Dismissible(
-            key: Key(cartItems[index]),
-            onDismissed: (direction) {
-              removeFromCart(index); // Remove item from the cart
-            },
-            background: Container(
-              color: Colors.red,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: 20.0),
-              child: const Icon(Icons.delete, color: Colors.white),
-            ),
-            child: ListTile(
-              leading: Container(
-                width: 60,
-                height: 60,
-                child: const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      'https://image.offgamers.com/infolink/2023/05/garena-tw.jpg'),
-                ),
-              ),
-              title: Text('Garena Shell'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
+        // Main column to organize content
+        children: [
+          Expanded(
+            child: cartItems.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.shopping_cart,
+                            size: 150, color: Colors.grey),
+                        const SizedBox(height: 16),
+                        const Text('Your cart is empty',
+                            style: TextStyle(
+                              fontSize: 30,
+                              color: Colors.grey,
+                            )),
+                        const SizedBox(height: 150),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                          ),
+                          child: const Text('See Products',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ],
+                    ),
+                  )
+                :
+                // Make ListView expandable
+                ListView.builder(
+                    itemCount: cartItems.length,
+                    itemBuilder: (ctx, index) {
+                      final cartItem = cartItems[index];
+                      return CartItemCardWidget(
+                        cartItem: cartItem,
+                        onQuantityChanged: (newQuantity) =>
+                            _updateQuantity(cartItem.id, newQuantity),
+                        onRemove: () => _removeFromCart(cartItem.id),
+                      );
+                    },
+                  ),
+          ),
+
+          // Bottom Sheet (Only when cartItems is not empty)
+          if (cartItems.isNotEmpty)
+            Container(
+              color: const Color(0xFF62BDBD),
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  //add a text here to display variant
-                  const Text('Variant: 1300'),
-                  Row(
-                    children: [
-                      const Text('Price: 1920 ৳'),
-                      const SizedBox(width: 10),
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: () {
-                          setState(() {
-                            // Decrease the quantity count
-                            if (quantity > 1) {
-                              quantity--;
-                            }
-                          });
-                        },
-                      ),
-                      Text('$quantity'), // Display the quantity count
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            // Increase the quantity count
-                            quantity++;
-                          });
-                        },
-                      ),
-                    ],
+                  Text(
+                    'Total: $total ৳',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PaymentScreen(totalAmount: total),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amber,
+                    ),
+                    child: const Text('Checkout',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  setState(() {
-                    total = 0; // Set total to 0 within setState
-                    removeFromCart(index); // Remove the item from the cart
-                  });
-                },
-              ),
             ),
-          );
-        },
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF62BDBD),
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Total: $total BDT', // Calculate total price
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Add your onPressed code here!
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            PaymentScreen(totalAmount: total)),
-                  );
-                },
-                child: const Text(
-                  'Checkout',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }

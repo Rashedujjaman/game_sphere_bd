@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:game_sphere_bd/screens/all_products.dart';
 import 'package:game_sphere_bd/screens/home_screen.dart';
 import 'package:game_sphere_bd/screens/login_screen.dart';
 import 'package:game_sphere_bd/screens/register_screen.dart';

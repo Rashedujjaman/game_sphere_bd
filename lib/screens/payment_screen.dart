@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PaymentScreen extends StatelessWidget {
-  final int totalAmount; // Pass the total amount from CartScreen
+  final double totalAmount; // Pass the total amount from CartScreen
 
   PaymentScreen({required this.totalAmount});
 

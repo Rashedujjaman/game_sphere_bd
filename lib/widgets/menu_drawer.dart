@@ -194,15 +194,34 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             );
                           },
                         ),
-                        const SizedBox(height: 16),
-                        // logout or login button that will be shown conditionally based on user login status;
+                        const SizedBox(height: 65),
+
+                        //Logout button
                         if (userLoggedIn)
-                          ListTile(
-                            leading: const Icon(Icons.logout),
-                            title: const Text('Logout'),
-                            onTap: () {
-                              logoutUser(context);
-                            },
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  logoutUser(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.amber,
+                                  foregroundColor:
+                                      const Color.fromARGB(150, 0, 0, 0),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize
+                                      .min, // Keep the Row's width compact
+                                  children: [
+                                    Icon(Icons.logout),
+                                    SizedBox(width: 8), // Add some spacing
+                                    Text('Logout',
+                                        style: TextStyle(fontSize: 16)),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                       ],
                     );
@@ -250,16 +269,29 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         );
                       },
                     ),
-                    const SizedBox(height: 16),
-                    ListTile(
-                      leading: const Icon(Icons.login),
-                      title: const Text("Login"), // White text
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginScreen()));
-                      },
+                    const SizedBox(height: 400),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            logoutUser(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                            foregroundColor: const Color.fromARGB(150, 0, 0, 0),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize
+                                .min, // Keep the Row's width compact
+                            children: [
+                              Icon(Icons.logout),
+                              SizedBox(width: 8), // Add some spacing
+                              Text('Login', style: TextStyle(fontSize: 16)),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

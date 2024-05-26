@@ -1,52 +1,59 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:game_sphere_bd/models/product.dart';
-import 'package:game_sphere_bd/models/variant.dart';
 import 'package:game_sphere_bd/widgets/product_card_widget.dart';
 
-class WishlistScreen extends StatelessWidget {
-  final List<ProductModel> wishlistProducts = [
-    ProductModel(
-      id: '1',
-      name: 'Garena Shell',
-      imageUrl: 'https://image.offgamers.com/infolink/2023/05/garena-tw.jpg',
-      rating: 4.5,
-      description:
-          'Garena Shells Code (Malaysia) sold by SEAGM is a region locked product. It is only valid for Garena account registered in the region of MALAYSIA. All purchases are NON-REFUNDABLE and NON-RETURNABLE.',
-      variant: [
-        Variant(
-          id: '1',
-          name: 'Shell',
-          price: 1920,
-          amount: 1300,
-        ),
-        Variant(
-          id: '2',
-          name: 'Shell',
-          price: 970,
-          amount: 650,
-        ),
-        Variant(
-          id: '3',
-          name: 'Shell',
-          price: 450,
-          amount: 300,
-        ),
-        Variant(
-          id: '4',
-          name: 'Shell',
-          price: 290,
-          amount: 180,
-        ),
-        Variant(
-          id: '5',
-          name: 'Shell',
-          price: 150,
-          amount: 90,
-        ),
-      ],
-    ),
-    // Add more ProductModels for the wishlist
-  ];
+class WishlistScreen extends StatefulWidget {
+  const WishlistScreen({Key? key}) : super(key: key);
+
+  @override
+  _WishlistScreenState createState() => _WishlistScreenState();
+}
+
+class _WishlistScreenState extends State<WishlistScreen> {
+  List<ProductModel> wishlistItems = [];
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWishlist();
+  }
+
+  //Fetch wishlist items
+  Future<void> _fetchWishlist() async {
+    setState(() => _isLoading = true);
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('wishlists')
+            .where('uid', isEqualTo: user.uid)
+            .get();
+
+        //Get item ids from wishlist
+        final productId =
+            querySnapshot.docs.map((doc) => doc['productId']).toList();
+
+        //Get item data from products collection based on product ID
+        final productSnapshot = await FirebaseFirestore.instance
+            .collection('products')
+            .where(FieldPath.documentId, whereIn: productId)
+            .get();
+
+        setState(() {
+          wishlistItems = productSnapshot.docs.map((doc) {
+            return ProductModel.fromFirestore(doc.id, doc.data());
+          }).toList();
+        });
+      }
+    } catch (e) {
+      print('Error fetching wishlist: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +68,14 @@ class WishlistScreen extends StatelessWidget {
         elevation: 1,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: ListView.builder(
-        itemCount: wishlistProducts.length,
-        itemBuilder: (context, index) {
-          final product = wishlistProducts[index];
-          return ProductCardWidget(product: product);
-        },
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Colors.white))
+          : ListView.builder(
+              itemCount: wishlistItems.length,
+              itemBuilder: (context, index) => ProductCardWidget(
+                product: wishlistItems[index],
+              ),
+            ),
     );
   }
 }

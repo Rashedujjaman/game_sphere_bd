@@ -33,22 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
   } // Fetch products when the screen loads
 
   Future<void> _fetchProducts() async {
-    try {
-      final querySnapshot = await FirebaseFirestore.instance
-          .collection('products') // Product collection named
-          .get();
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('products') // Product collection named
+        .get();
 
-      setState(() {
-        products = querySnapshot.docs.map((doc) {
-          final data = doc.data();
-          return ProductModel.fromFirestore(
-              doc.id, data); // Convert Firestore data to ProductModel
-        }).toList();
-      });
-    } catch (error) {
-      // Handle errors, e.g., show a SnackBar or error message
-      print("Error fetching products: $error");
-    }
+    setState(() {
+      products = querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        return ProductModel.fromFirestore(
+            doc.id, data); // Convert Firestore data to ProductModel
+      }).toList();
+    });
   }
 
   @override
@@ -96,9 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // const SizedBox(
-            //   height: 16,
-            // ),
             CarouselSlider(
               items: carouselImages.map((image) {
                 return ClipRRect(
@@ -127,7 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 scrollDirection: Axis.horizontal,
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
@@ -136,6 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //Headline of the section
                     children: [
                       const Text(
                         "Popular Items",
@@ -174,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, // Two items per row
                 crossAxisSpacing: 0,
-                mainAxisSpacing: 5.0,
+                mainAxisSpacing: 0,
                 childAspectRatio: 6 / 8, // Adjust to fit card's aspect ratio
               ),
               itemBuilder: (context, index) {
