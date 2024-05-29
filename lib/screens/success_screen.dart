@@ -34,7 +34,7 @@ class SuccessPage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Delivery of Voucher Code: ${order.voucherCode}',
+              'Delivery of Voucher Code: ${order.products[0].voucherCode}',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 10),

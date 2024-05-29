@@ -144,8 +144,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 .get();
 
             DocumentReference? docRef;
+            // Item with this variant and code not found, add it to the cart
             if (cartQuery.docs.isEmpty) {
-              // Item with this variant and code not found, add it to the cart
               docRef =
                   await FirebaseFirestore.instance.collection('carts').add({
                 'uid': user.uid,
@@ -174,7 +174,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 .collection('products')
                 .doc(productId)
                 .update({
-              'variants.$variantId.nextVoucherCodeIndex': nextCodeIndex + 1,
+              'variant.$variantId.nextVoucherCodeIndex': nextCodeIndex + 1,
             });
             _showSuccessMessage('Added to cart');
           } else {

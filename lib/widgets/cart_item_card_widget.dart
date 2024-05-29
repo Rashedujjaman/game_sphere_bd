@@ -19,7 +19,7 @@ class CartItemCardWidget extends StatelessWidget {
     ;
     return Dismissible(
       // Using Dismissible for swipe-to-delete
-      key: Key(cartItem.id), // Unique key for Dismissible
+      key: Key(cartItem.cartId), // Unique key for Dismissible
       onDismissed: (direction) => onRemove(),
       direction:
           DismissDirection.endToStart, // Swipe from right to left to delete
@@ -43,7 +43,7 @@ class CartItemCardWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                  image: CachedNetworkImageProvider(cartItem.productImage),
+                  image: CachedNetworkImageProvider(cartItem.imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),

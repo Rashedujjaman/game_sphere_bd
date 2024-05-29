@@ -36,7 +36,7 @@ class _CartScreenState extends State<CartScreen> {
 
       // Update the cartItems list
       setState(() {
-        cartItems.removeWhere((item) => item.id == cartItemId);
+        cartItems.removeWhere((item) => item.cartId == cartItemId);
       });
     } catch (e) {
       print('Error removing item from cart: $e');
@@ -74,10 +74,10 @@ class _CartScreenState extends State<CartScreen> {
 
             if (variantData != null) {
               fetchedCartItems.add(CartItem(
-                id: cartDoc.id,
+                cartId: cartDoc.id,
                 productId: productId,
                 productName: productData['name'],
-                productImage: productData['imageUrl'],
+                imageUrl: productData['imageUrl'],
                 variantId: variantId,
                 variantName: variantData['name'],
                 price: (variantData['price'] as num).toDouble(),
@@ -194,8 +194,8 @@ class _CartScreenState extends State<CartScreen> {
                             return CartItemCardWidget(
                               cartItem: cartItem,
                               onQuantityChanged: (newQuantity) =>
-                                  _updateQuantity(cartItem.id, newQuantity),
-                              onRemove: () => _removeFromCart(cartItem.id),
+                                  _updateQuantity(cartItem.cartId, newQuantity),
+                              onRemove: () => _removeFromCart(cartItem.cartId),
                             );
                           },
                         ),

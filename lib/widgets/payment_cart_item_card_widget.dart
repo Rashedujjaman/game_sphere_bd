@@ -21,7 +21,7 @@ class PaymentCartItemCardWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
-                image: CachedNetworkImageProvider(cartItem.productImage),
+                image: CachedNetworkImageProvider(cartItem.imageUrl),
                 fit: BoxFit.cover,
               ),
             ),

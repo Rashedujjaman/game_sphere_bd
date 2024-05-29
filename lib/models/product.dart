@@ -25,9 +25,9 @@ class ProductModel {
           'Product data is missing required fields'); // Or provide default values
     }
 
-    Map<String, Variant> variants = {};
+    Map<String, Variant> variant = {};
     (data['variant'] as Map<String, dynamic>).forEach((key, value) {
-      variants[key] = Variant.fromMap(key, value);
+      variant[key] = Variant.fromMap(key, value);
     });
 
     return ProductModel(
@@ -36,7 +36,7 @@ class ProductModel {
       imageUrl: data['imageUrl'],
       description: data['description'],
       rating: double.tryParse(data['rating'].toString()) ?? 0.0,
-      variant: variants,
+      variant: variant,
     );
   }
 }

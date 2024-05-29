@@ -1,8 +1,8 @@
 class CartItem {
-  final String id;
+  final String cartId;
   final String productId;
   final String productName;
-  final String productImage;
+  final String imageUrl;
   final String variantId;
   final String variantName;
   final int variantAmount;
@@ -10,12 +10,12 @@ class CartItem {
   int quantity;
 
   CartItem({
-    required this.id,
+    required this.cartId,
     required this.productId,
     required this.variantId,
     required this.quantity,
     required this.productName,
-    required this.productImage,
+    required this.imageUrl,
     required this.variantName,
     required this.variantAmount,
     required this.price,
@@ -25,10 +25,10 @@ class CartItem {
       Map<String, dynamic> productData) {
     final selectedVariant = (cartData['variant'] as Map<String, dynamic>);
     return CartItem(
-      id: id,
+      cartId: id,
       productId: cartData['productId'],
       productName: productData['name'],
-      productImage: productData['imageUrl'],
+      imageUrl: productData['imageUrl'],
       variantId: cartData['variantId'],
       variantName: selectedVariant['name'],
       price: (selectedVariant['price'] as num).toDouble(),
@@ -39,22 +39,27 @@ class CartItem {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'cartId': cartId,
       'productName': productName,
       'quantity': quantity,
       'price': price,
+      'productId': productId,
+      'variantId': variantId,
+      'imageUrl': imageUrl,
+      'variantName': variantName,
+      'variantAmount': variantAmount,
     };
   }
 
   factory CartItem.fromJson(Map<String, dynamic> json) {
     return CartItem(
-      id: json['id'],
+      cartId: json['cartId'],
       productId: json['productId'],
       productName: json['productName'],
       quantity: json['quantity'],
       price: json['price'],
       variantId: json['variantId'],
-      productImage: json['imageUrl'],
+      imageUrl: json['imageUrl'],
       variantName: json['variantName'],
       variantAmount: json['variantAmount'],
     );

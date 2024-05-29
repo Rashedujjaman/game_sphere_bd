@@ -4,28 +4,32 @@ import 'package:intl/intl.dart';
 import 'package:game_sphere_bd/models/order.dart';
 
 class OrderHistoryScreen extends StatelessWidget {
-  final List<Order> orders = [];
-  // Order(
-  //   orderId: '1',
-  //   name: 'Garena Shell',
-  //   image: 'assets/images/garena.png',
-  //   voucherCode: '65242458125456598',
-  //   variant: '1300',
-  //   totalAmount: 1920.0,
-  //   status: 'Delivered',
-  //   orderDate: DateTime.now(),
-  //   paymentMethod: 'Bkash',
-  //   products: [
-  //     OrderProduct(
-  //       productName: 'Garena Shell',
-  //       quantity: 1,
-  //       price: 1920.0,
-  //     ),
-  //   ],
-  // ),
+  final List<Order> orders = [
+    Order(
+      orderId: '1',
+      name: 'Garena Shell',
+      totalAmount: 1920.0,
+      status: 'Delivered',
+      orderDate: DateTime.now(),
+      paymentMethod: 'Bkash',
+      products: [
+        OrderProduct(
+          productName: 'Garena Shell',
+          productId: '1',
+          variantId: '1',
+          variantName: 'Shell',
+          amount: 1300,
+          imageUrl: 'assets/images/garena.png',
+          voucherCode: '65242458125456598',
+          quantity: 1,
+          price: 1920.0,
+        ),
+      ],
+    ),
+  ];
   // Add more orders here
 
-  OrderHistoryScreen({Key? key}) : super(key: key);
+  // OrderHistoryScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +104,8 @@ class OrderDetailsScreen extends StatelessWidget {
                   height: 150,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage(order.image), fit: BoxFit.fitWidth),
+                        image: NetworkImage(order.products[0].imageUrl),
+                        fit: BoxFit.fitWidth),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -131,7 +136,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Variant: ${order.variant}',
+                  'Variant: ${order.products[0].variantName}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -159,7 +164,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'code: ${order.voucherCode}',
+                  'code: ${order.products[0].voucherCode}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
