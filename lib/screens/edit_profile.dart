@@ -1,4 +1,4 @@
-import 'dart:io'; // Import for File
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -186,7 +186,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 color: const Color(0xFF62BDBD),
                                 border: Border.all(
                                     color: const Color.fromARGB(
-                                        255, 255, 255, 255)!,
+                                        255, 255, 255, 255),
                                     width: 1), // Add a grey border
                               ),
                               child: const Icon(

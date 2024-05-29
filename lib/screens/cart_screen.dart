@@ -16,6 +16,7 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   List<CartItem> cartItems = [];
   final user = FirebaseAuth.instance.currentUser;
+  bool isLoading = true;
   double total = 0.0;
 
   @override
@@ -47,14 +48,14 @@ class _CartScreenState extends State<CartScreen> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        final cartQuerySnapshot = await FirebaseFirestore.instance
+        final querySnapshot = await FirebaseFirestore.instance
             .collection('carts')
             .where('uid', isEqualTo: user.uid)
             .get();
 
         List<CartItem> fetchedCartItems = [];
 
-        for (var cartDoc in cartQuerySnapshot.docs) {
+        for (var cartDoc in querySnapshot.docs) {
           final cartData = cartDoc.data();
           final productId = cartData['productId'] as String;
           final variantId = cartData['variantId'] as String;
@@ -82,18 +83,22 @@ class _CartScreenState extends State<CartScreen> {
                 price: (variantData['price'] as num).toDouble(),
                 quantity: quantity,
                 variantAmount: variantData['amount'],
+                // variantAmount: selectedVariant['amount'],
               ));
             } else {
+              // Handle case where variant is not found
               print(
                   'Error: Variant with ID $variantId not found in product $productId');
             }
           } else {
+            // Handle case where product is not found
             print('Error: Product with ID $productId not found');
           }
         }
 
         setState(() {
           cartItems = fetchedCartItems;
+          isLoading = false;
         });
 
         // Calculate total after fetching cart items
@@ -139,94 +144,121 @@ class _CartScreenState extends State<CartScreen> {
         elevation: 1,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Column(
-        // Main column to organize content
-        children: [
-          Expanded(
-            child: cartItems.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.shopping_cart,
-                            size: 150, color: Colors.grey),
-                        const SizedBox(height: 16),
-                        const Text('Your cart is empty',
-                            style: TextStyle(
-                              fontSize: 30,
-                              color: Colors.grey,
-                            )),
-                        const SizedBox(height: 150),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Color(0xFF62BDBD),
+            ))
+          : Column(
+              // Main column to organize content
+              children: [
+                Expanded(
+                  child: cartItems.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.shopping_cart,
+                                  size: 150, color: Colors.grey),
+                              const SizedBox(height: 16),
+                              const Text('Your cart is empty',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    color: Colors.grey,
+                                  )),
+                              const SizedBox(height: 150),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomeScreen()),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.amber,
+                                ),
+                                child: const Text('See Products',
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            ],
+                          ),
+                        )
+                      :
+                      // Make ListView expandable
+                      ListView.builder(
+                          itemCount: cartItems.length,
+                          itemBuilder: (ctx, index) {
+                            final cartItem = cartItems[index];
+                            return CartItemCardWidget(
+                              cartItem: cartItem,
+                              onQuantityChanged: (newQuantity) =>
+                                  _updateQuantity(cartItem.id, newQuantity),
+                              onRemove: () => _removeFromCart(cartItem.id),
                             );
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
+                        ),
+                ),
+
+                // Bottom Sheet (Only when cartItems is not empty)
+                if (cartItems.isNotEmpty)
+                  Container(
+                    color: const Color(0xFF62BDBD),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total: $total ৳',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          child: const Text('See Products',
-                              style: TextStyle(color: Colors.white)),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            // Fetch user name and email
+                            final user = FirebaseAuth.instance.currentUser;
+                            if (user != null) {
+                              final userData = await FirebaseFirestore.instance
+                                  .collection('Customers')
+                                  .doc(user.uid)
+                                  .get();
+                              final String userName = userData['fullName'];
+                              final String userEmail = userData['email'];
+                              final int rewardPoint = userData['rewardPoint'];
+                              final String userMobile = userData['mobileNo'];
+
+                              if (mounted) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PaymentScreen(
+                                      totalAmount: total,
+                                      cartItems: cartItems,
+                                      userName: userName,
+                                      userEmail: userEmail,
+                                      rewardPoint: rewardPoint,
+                                      userMobile: userMobile,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                          ),
+                          child: const Text('Checkout',
+                              style: TextStyle(color: const Color(0xFF62BDBD))),
                         ),
                       ],
                     ),
-                  )
-                :
-                // Make ListView expandable
-                ListView.builder(
-                    itemCount: cartItems.length,
-                    itemBuilder: (ctx, index) {
-                      final cartItem = cartItems[index];
-                      return CartItemCardWidget(
-                        cartItem: cartItem,
-                        onQuantityChanged: (newQuantity) =>
-                            _updateQuantity(cartItem.id, newQuantity),
-                        onRemove: () => _removeFromCart(cartItem.id),
-                      );
-                    },
                   ),
-          ),
-
-          // Bottom Sheet (Only when cartItems is not empty)
-          if (cartItems.isNotEmpty)
-            Container(
-              color: const Color(0xFF62BDBD),
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Total: $total ৳',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              PaymentScreen(totalAmount: total),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amber,
-                    ),
-                    child: const Text('Checkout',
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                ],
-              ),
+              ],
             ),
-        ],
-      ),
     );
   }
 }

@@ -1,69 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:game_sphere_bd/models/order_product.dart';
 import 'package:intl/intl.dart';
-
-class Order {
-  final String id;
-  final double totalAmount;
-  final String status;
-  final DateTime orderDate;
-  final String paymentMethod;
-  final String name;
-  final String code;
-  final String image;
-  final String variant;
-
-  Order({
-    required this.id,
-    required this.totalAmount,
-    required this.status,
-    required this.orderDate,
-    required this.paymentMethod,
-    required this.name,
-    required this.code,
-    required this.image,
-    required this.variant,
-  });
-}
+import 'package:game_sphere_bd/models/order.dart';
 
 class OrderHistoryScreen extends StatelessWidget {
-  final List<Order> orders = [
-    Order(
-      id: '1',
-      name: 'Garena Shell',
-      image: 'assets/images/garena.png',
-      code: '65242458125456598',
-      variant: '1300',
-      totalAmount: 1920.0,
-      status: 'Delivered',
-      orderDate: DateTime.now(),
-      paymentMethod: 'Bkash',
-    ),
-    Order(
-      id: '2',
-      totalAmount: 2000.0,
-      status: 'Delivered',
-      orderDate: DateTime.now(),
-      paymentMethod: 'Rocket',
-      name: 'Unipin UC',
-      code: '9513574628046379',
-      image: 'assets/images/unipin.jpg',
-      variant: '1800',
-    ),
-
-    Order(
-      id: '3',
-      totalAmount: 950.0,
-      status: 'Delivered',
-      orderDate: DateTime.now(),
-      paymentMethod: 'Nagad',
-      name: 'Republic GG',
-      code: '3542698710258961',
-      image: 'assets/images/rgg.png',
-      variant: '650',
-    ),
-
-    // Add more orders here
-  ];
+  final List<Order> orders = [];
+  // Order(
+  //   orderId: '1',
+  //   name: 'Garena Shell',
+  //   image: 'assets/images/garena.png',
+  //   voucherCode: '65242458125456598',
+  //   variant: '1300',
+  //   totalAmount: 1920.0,
+  //   status: 'Delivered',
+  //   orderDate: DateTime.now(),
+  //   paymentMethod: 'Bkash',
+  //   products: [
+  //     OrderProduct(
+  //       productName: 'Garena Shell',
+  //       quantity: 1,
+  //       price: 1920.0,
+  //     ),
+  //   ],
+  // ),
+  // Add more orders here
 
   OrderHistoryScreen({Key? key}) : super(key: key);
 
@@ -87,7 +47,7 @@ class OrderHistoryScreen extends StatelessWidget {
           return Card(
             margin: const EdgeInsets.all(8.0),
             child: ListTile(
-              title: Text('Order Number: ${order.id}'),
+              title: Text('Order Number: ${order.orderId}'),
               subtitle: Text(
                   'Total Amount: ${order.totalAmount.toStringAsFixed(0)} BDT'),
               trailing: Text('Status: ${order.status}'),
@@ -136,10 +96,8 @@ class OrderDetailsScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //display the image of the product in a container aligned to the left of the order details in a raised button shape
                 Container(
                   height: 150,
-                  // width: 200,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage(order.image), fit: BoxFit.fitWidth),
@@ -147,13 +105,12 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                //add a horizontal line to separate the image from the order details
                 const Divider(
                   color: Colors.white,
                   thickness: 1,
                 ),
                 Text(
-                  'Order ID: ${order.id}',
+                  'Order ID: ${order.orderId}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -202,7 +159,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'code: ${order.code}',
+                  'code: ${order.voucherCode}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -212,7 +169,27 @@ class OrderDetailsScreen extends StatelessWidget {
                   color: Colors.white,
                   thickness: 1,
                 ),
-                // Add more detailed information about the order here
+                // Display Order Products
+                const Text(
+                  'Products:',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: order.products.length,
+                  itemBuilder: (context, index) {
+                    final product = order.products[index];
+                    return ListTile(
+                      title: Text(product.productName),
+                      subtitle: Text('Quantity: ${product.quantity}'),
+                      trailing: Text('${product.price} BDT'),
+                    );
+                  },
+                ),
               ],
             ),
           ],

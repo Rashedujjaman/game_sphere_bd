@@ -42,6 +42,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+        backgroundColor: Colors.white,
         child: _user != null
             ? StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseFirestore.instance
@@ -206,9 +207,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                                   logoutUser(context);
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.amber,
-                                  foregroundColor:
-                                      const Color.fromARGB(150, 0, 0, 0),
+                                  elevation: .2,
+                                  shadowColor: null,
+                                  // backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xFF62BDBD),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    side: const BorderSide(
+                                        color: Color(0xFF62BDBD)),
+                                  ),
                                 ),
                                 child: const Row(
                                   mainAxisSize: MainAxisSize
@@ -278,14 +285,20 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             logoutUser(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
-                            foregroundColor: const Color.fromARGB(150, 0, 0, 0),
+                            elevation: .2,
+                            shadowColor: null,
+                            // backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF62BDBD),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: const BorderSide(color: Color(0xFF62BDBD)),
+                            ),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize
                                 .min, // Keep the Row's width compact
                             children: [
-                              Icon(Icons.logout),
+                              Icon(Icons.login),
                               SizedBox(width: 8), // Add some spacing
                               Text('Login', style: TextStyle(fontSize: 16)),
                             ],

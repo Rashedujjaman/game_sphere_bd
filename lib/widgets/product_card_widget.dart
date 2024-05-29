@@ -21,7 +21,7 @@ class ProductCardWidget extends StatelessWidget {
         );
       },
       child: Card(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.lightBlue[50],
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         shadowColor: const Color.fromARGB(255, 0, 0, 0),
         child: Column(

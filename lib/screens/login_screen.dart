@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:game_sphere_bd/constants.dart';
 import 'package:game_sphere_bd/screens/home_screen.dart';
 import 'package:game_sphere_bd/screens/register_screen.dart';
 

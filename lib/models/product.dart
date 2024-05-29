@@ -6,7 +6,7 @@ class ProductModel {
   String description;
   String imageUrl;
   double rating;
-  List<Variant> variant;
+  Map<String, Variant> variant;
 
   ProductModel({
     required this.id,
@@ -24,16 +24,19 @@ class ProductModel {
       throw ArgumentError(
           'Product data is missing required fields'); // Or provide default values
     }
+
+    Map<String, Variant> variants = {};
+    (data['variant'] as Map<String, dynamic>).forEach((key, value) {
+      variants[key] = Variant.fromMap(key, value);
+    });
+
     return ProductModel(
-      id: id, // Use the 'id' parameter passed to the constructor
+      id: id,
       name: data['name'],
       imageUrl: data['imageUrl'],
       description: data['description'],
       rating: double.tryParse(data['rating'].toString()) ?? 0.0,
-      variant: (data['variant'] as Map<String, dynamic>)
-          .entries
-          .map((entry) => Variant.fromMap(entry.key, entry.value))
-          .toList(),
+      variant: variants,
     );
   }
 }

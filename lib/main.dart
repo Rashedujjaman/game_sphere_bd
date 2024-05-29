@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:game_sphere_bd/screens/home_screen.dart';
-import 'package:game_sphere_bd/screens/login_screen.dart';
-import 'package:game_sphere_bd/screens/register_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Widget Binding
@@ -39,12 +37,11 @@ class MyApp extends StatelessWidget {
         title: 'GameSphere BD',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 255, 255, 255)),
           useMaterial3: true,
         ),
         // home: const LoginScreen());
         home: const HomeScreen());
-    // home: const RegisterScreen());
-    // home: const AllProductsScreen());
   }
 }

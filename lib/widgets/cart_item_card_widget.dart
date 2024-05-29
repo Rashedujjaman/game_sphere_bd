@@ -16,6 +16,7 @@ class CartItemCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ;
     return Dismissible(
       // Using Dismissible for swipe-to-delete
       key: Key(cartItem.id), // Unique key for Dismissible
@@ -36,10 +37,11 @@ class CartItemCardWidget extends StatelessWidget {
           // Main Row for the entire card content
           children: [
             Container(
-              margin: const EdgeInsets.all(8),
+              margin: const EdgeInsets.all(5),
               width: 80,
               height: 80,
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
                   image: CachedNetworkImageProvider(cartItem.productImage),
                   fit: BoxFit.cover,
@@ -86,7 +88,8 @@ class CartItemCardWidget extends StatelessWidget {
                       : null, // Disable decrement button if quantity is 1
                 ),
                 Text('${cartItem.quantity}',
-                    style: TextStyle(fontSize: 16)), // Style the quantity text
+                    style: const TextStyle(
+                        fontSize: 16)), // Style the quantity text
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () => onQuantityChanged(cartItem.quantity + 1),

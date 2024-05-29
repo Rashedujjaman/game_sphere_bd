@@ -12,6 +12,7 @@ class AllProductsScreen extends StatefulWidget {
 
 class _AllProductsScreenState extends State<AllProductsScreen> {
   List<ProductModel> products = []; // Store fetched products
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
           return ProductModel.fromFirestore(
               doc.id, data); // Convert Firestore data to ProductModel
         }).toList();
+        _isLoading = false;
       });
     } catch (error) {
       // Handle errors, e.g., show a SnackBar or error message
@@ -50,20 +52,24 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
           elevation: 2,
           backgroundColor: const Color(0xFF62BDBD),
         ),
-        body: SingleChildScrollView(
-            child: Column(
-          children: [
-            const SizedBox(height: 16),
-            ...products.isEmpty
-                ? const [
-                    Center(
-                      child: CircularProgressIndicator(color: Colors.white),
-                    )
-                  ]
-                : products
-                    .map((product) => ProductCardWidget(product: product))
-                    .toList(),
-          ],
-        )));
+        body: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator()) // Show loading indicator
+            : SingleChildScrollView(
+                child: Column(
+                children: [
+                  const SizedBox(height: 16),
+                  ...products.isEmpty
+                      ? const [
+                          Center(
+                            child:
+                                CircularProgressIndicator(color: Colors.white),
+                          )
+                        ]
+                      : products
+                          .map((product) => ProductCardWidget(product: product))
+                          .toList(),
+                ],
+              )));
   }
 }

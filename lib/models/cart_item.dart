@@ -36,4 +36,27 @@ class CartItem {
       variantAmount: (selectedVariant['amount'] as num).toInt(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'productName': productName,
+      'quantity': quantity,
+      'price': price,
+    };
+  }
+
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
+      id: json['id'],
+      productId: json['productId'],
+      productName: json['productName'],
+      quantity: json['quantity'],
+      price: json['price'],
+      variantId: json['variantId'],
+      productImage: json['imageUrl'],
+      variantName: json['variantName'],
+      variantAmount: json['variantAmount'],
+    );
+  }
 }
