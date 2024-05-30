@@ -5,7 +5,7 @@ class ProductModel {
   String name;
   String description;
   String imageUrl;
-  double rating;
+  double averageRating;
   Map<String, Variant> variant;
 
   ProductModel({
@@ -14,7 +14,7 @@ class ProductModel {
     required this.description,
     required this.imageUrl,
     required this.variant,
-    required this.rating,
+    required this.averageRating,
   });
 
   factory ProductModel.fromFirestore(String id, Map<String, dynamic> data) {
@@ -35,7 +35,7 @@ class ProductModel {
       name: data['name'],
       imageUrl: data['imageUrl'],
       description: data['description'],
-      rating: double.tryParse(data['rating'].toString()) ?? 0.0,
+      averageRating: double.tryParse(data['averageRating'].toString()) ?? 0.0,
       variant: variant,
     );
   }

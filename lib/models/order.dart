@@ -10,6 +10,8 @@ class Order {
   final String paymentMethod;
   final String name;
   final List<OrderProduct> products; // List of OrderProduct
+  final String email;
+  final String mobile;
 
   Order({
     required this.orderId,
@@ -18,7 +20,9 @@ class Order {
     required this.orderDate,
     required this.paymentMethod,
     required this.name,
-    required this.products, // Include products in the constructor
+    required this.products,
+    required this.email,
+    required this.mobile,
   });
 
   factory Order.fromFirestore(String orderId, Map<String, dynamic> data) {
@@ -29,6 +33,8 @@ class Order {
       orderDate: (data['orderTime'] as Timestamp).toDate(),
       paymentMethod: data['paymentMethod'] ?? 'Not available',
       name: data['name'],
+      email: data['email'],
+      mobile: data['mobile'],
       products: (data['items'] as List<dynamic>).map((itemData) {
         return OrderProduct.fromMap(itemData as Map<String, dynamic>);
       }).toList(),

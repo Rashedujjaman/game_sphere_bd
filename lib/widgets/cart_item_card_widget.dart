@@ -24,7 +24,7 @@ class CartItemCardWidget extends StatelessWidget {
       direction:
           DismissDirection.endToStart, // Swipe from right to left to delete
       background: Container(
-        color: Colors.red,
+        color: const Color.fromARGB(255, 192, 71, 63),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20.0),
         child:
@@ -32,7 +32,7 @@ class CartItemCardWidget extends StatelessWidget {
       ),
       child: Card(
         margin: const EdgeInsets.all(8),
-        color: Colors.cyan[100],
+        color: Colors.cyan[50],
         child: Row(
           // Main Row for the entire card content
           children: [

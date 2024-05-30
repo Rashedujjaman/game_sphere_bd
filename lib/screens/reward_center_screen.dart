@@ -1,10 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:game_sphere_bd/constants.dart';
 
 class RewardCenterScreen extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  User? _user = FirebaseAuth.instance.currentUser;
 
   RewardCenterScreen({super.key});
 
@@ -25,7 +24,10 @@ class RewardCenterScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: FutureBuilder<DocumentSnapshot>(
-            future: _firestore.collection('Customers').doc(_user!.uid).get(),
+            future: _firestore
+                .collection('Customers')
+                .doc(Constants.currentUser!.uid)
+                .get(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator(

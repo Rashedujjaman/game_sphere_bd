@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:game_sphere_bd/models/product.dart';
 import 'package:game_sphere_bd/models/variant.dart';
 import 'package:game_sphere_bd/screens/cart_screen.dart';
+import 'package:game_sphere_bd/widgets/review_widget.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final ProductModel product;
@@ -358,9 +359,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   const SizedBox(height: 8),
                   Row(
                     children: List.generate(5, (index) {
-                      int fullStars =
-                          widget.product.rating.floor(); // Get the integer part
-                      double remaining = widget.product.rating -
+                      int fullStars = widget.product.averageRating
+                          .floor(); // Get the integer part
+                      double remaining = widget.product.averageRating -
                           fullStars; // Get the decimal part
 
                       if (index < fullStars) {
@@ -432,6 +433,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  Center(
+                      child: Column(children: [
+                    const Text(
+                      'Customer Reviews:',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    ReviewWidget(productId: widget.product.id),
+                  ])),
                 ],
               ),
             ),

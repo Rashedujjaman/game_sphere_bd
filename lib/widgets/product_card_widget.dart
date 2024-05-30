@@ -66,9 +66,9 @@ class ProductCardWidget extends StatelessWidget {
                       Row(
                         children: List.generate(5, (index) {
                           // Calculate the rating to determine how many full/half stars to display
-                          int fullStars =
-                              product.rating.floor(); // Get the integer part
-                          double remaining = product.rating -
+                          int fullStars = product.averageRating
+                              .floor(); // Get the integer part
+                          double remaining = product.averageRating -
                               fullStars; // Get the decimal part
 
                           if (index < fullStars) {

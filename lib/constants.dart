@@ -1,1 +1,5 @@
-String serverUrl = 'http://10.4.69.223/PSM/backend/';
+import 'package:firebase_auth/firebase_auth.dart';
+
+class Constants {
+  static User? currentUser = FirebaseAuth.instance.currentUser;
+}
