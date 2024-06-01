@@ -46,6 +46,9 @@ class PaymentCartItemCardWidget extends StatelessWidget {
               ],
             ),
           ),
+          Text('Qty: ${cartItem.quantity.toString()}',
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(width: 20),
         ],
       ),
     );

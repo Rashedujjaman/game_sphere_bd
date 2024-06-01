@@ -36,41 +36,48 @@ class RewardCenterScreen extends StatelessWidget {
                 return Text('Error: ${snapshot.error}');
               } else {
                 final int rewardPoint = snapshot.data!['rewardPoint'] ?? 0;
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Congratulations!',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                return Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Reward Points: $rewardPoint',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 100),
-                    Text(
-                      'You have achieved $rewardPoint rewards from your previous purchases.',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+                      const SizedBox(height: 16),
+                      const Text(
+                        'You can redeem your reward points for discounts on your next purchase.',
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    const SizedBox(height: 150),
-                    // const Icon(
-                    //   Icons.padding_sharp,
-                    //   color: Colors.white,
-                    //   size: 24,
-                    // ),
-                    const Text(
-                      'You May Redeem Your Points For Discounts On Your Next Purchase!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 12,
+                      const SizedBox(height: 16),
+                      const Text(
+                        '100 Reward Point = 10 Taka',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Thank you for being a loyal customer!',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 );
               }
             },

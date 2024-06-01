@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:game_sphere_bd/models/order_product.dart';
-import 'package:game_sphere_bd/screens/payment_screen.dart';
 
 class Order {
   final String orderId;
@@ -12,6 +11,9 @@ class Order {
   final List<OrderProduct> products; // List of OrderProduct
   final String email;
   final String mobile;
+  final double adjustedTotal;
+  final double discount;
+  final int earnedLoyaltyPoints;
 
   Order({
     required this.orderId,
@@ -23,6 +25,9 @@ class Order {
     required this.products,
     required this.email,
     required this.mobile,
+    required this.adjustedTotal,
+    required this.discount,
+    required this.earnedLoyaltyPoints,
   });
 
   factory Order.fromFirestore(String orderId, Map<String, dynamic> data) {
@@ -35,6 +40,9 @@ class Order {
       name: data['name'],
       email: data['email'],
       mobile: data['mobile'],
+      adjustedTotal: (data['adjustedTotal'] as num).toDouble(),
+      discount: (data['discount'] as num).toDouble(),
+      earnedLoyaltyPoints: data['earnedLoyaltyPoints'],
       products: (data['items'] as List<dynamic>).map((itemData) {
         return OrderProduct.fromMap(itemData as Map<String, dynamic>);
       }).toList(),

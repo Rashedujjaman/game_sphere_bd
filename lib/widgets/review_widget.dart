@@ -55,12 +55,14 @@ class ReviewWidget extends StatelessWidget {
                 child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.white,
-                      backgroundImage: imageUrl != null
+                      backgroundImage: imageUrl != null || imageUrl.isNotEmpty
                           ? NetworkImage(
                               imageUrl,
                             )
                           : null,
-                      child: imageUrl.isEmpty ? const Icon(Icons.person) : null,
+                      child: imageUrl.isEmpty || imageUrl == null
+                          ? const Icon(Icons.person)
+                          : null,
                     ),
                     title: Text(
                       'Customer: ${customerReview['userName']}\n$formattedDate\nRating : $rating out of 5\nComment: ${customerReview['comment'] ?? ' '}',

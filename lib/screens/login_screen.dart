@@ -4,7 +4,7 @@ import 'package:game_sphere_bd/screens/home_screen.dart';
 import 'package:game_sphere_bd/screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -15,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  TextEditingController _emailController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   bool _isLoading = false;
 
   @override
@@ -40,10 +40,12 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         print(userCredential);
         // Handle successful login
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
       } on FirebaseAuthException catch (e) {
         // Handle Firebase authentication errors
         if (e.code == 'user-not-found') {
@@ -63,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } catch (e) {
         // Handle other errors (e.g., network issues)
-        print('Error: $e'); // Add this line to print the error message
+        // print('Error: $e'); // Add this line to print the error message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.red,
@@ -188,13 +190,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                       const Color.fromARGB(255, 255, 255, 255),
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 16),
-                                  //add margin color to amber
-
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                  side:
-                                      BorderSide(color: Colors.amber, width: 1),
+                                  side: const BorderSide(
+                                      color: Colors.amber, width: 1),
                                 ),
                                 child: const Text(
                                   'Sign Up',
@@ -215,13 +215,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             const SizedBox(height: 8.0),
                             if (_isLoading)
-                              Container(
-                                // Loading indicator overlay
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors
-                                        .white, //change the indicator color
-                                  ),
+                              const Center(
+                                child: CircularProgressIndicator(
+                                  color:
+                                      Colors.white, //change the indicator color
                                 ),
                               ),
                           ],

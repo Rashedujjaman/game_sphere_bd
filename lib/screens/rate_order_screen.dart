@@ -64,7 +64,8 @@ class _RateOrderItemScreenState extends State<RateOrderItemScreen> {
           .where('uid', isEqualTo: user.uid)
           .get();
 
-      final String imageUrl = userDocSnapshot.docs.first.data()['imageUrl'];
+      final String imageUrl =
+          userDocSnapshot.docs.first.data()['imageUrl'] ?? '';
       final String userName = userDocSnapshot.docs.first.data()['username'];
 
       final ratingData = {
@@ -119,75 +120,109 @@ class _RateOrderItemScreenState extends State<RateOrderItemScreen> {
           });
         }
       });
-
-      Navigator.pop(context);
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF62BDBD),
-        elevation: 1,
-        title: const Text(
-          'Item Rating',
-          style: TextStyle(color: Colors.white),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF62BDBD),
+          elevation: 1,
+          title: const Text(
+            'Item Rating',
+            style: TextStyle(color: Colors.white),
+          ),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Text(
-                    widget.orderProduct.productName,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+        body: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(color: Colors.amber))
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ClipRect(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.red,
+                                width: 2.0,
+                              ),
+                            ),
+                            child: Image.network(
+                              widget.orderProduct.imageUrl,
+                              width: 120,
+                              height: 120,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        widget.orderProduct.productName,
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+                      RatingBar.builder(
+                        initialRating: _rating,
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemBuilder: (context, _) => const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          setState(() {
+                            _rating = rating;
+                          });
+                        },
+                      ),
+                      const ListTile(
+                        leading: Text(
+                          'Worst',
+                          style: TextStyle(fontSize: 16, color: Colors.red),
+                        ),
+                        trailing: Text('Excellent',
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.green)),
+                      ),
+                      TextField(
+                        controller: _commentController,
+                        decoration: const InputDecoration(
+                          labelText: 'Comment',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: .5,
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.amber,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          side: const BorderSide(color: Colors.amber, width: 1),
+                        ),
+                        onPressed: _submitRating,
+                        child: _hasRated
+                            ? const Text('Submit Edit')
+                            : const Text('Submit Rating'),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  RatingBar.builder(
-                    initialRating: _rating,
-                    minRating: 1,
-                    direction: Axis.horizontal,
-                    allowHalfRating: true,
-                    itemCount: 5,
-                    itemBuilder: (context, _) => const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                    ),
-                    onRatingUpdate: (rating) {
-                      setState(() {
-                        _rating = rating;
-                      });
-                    },
-                  ),
-                  const ListTile(
-                    leading: Text(
-                      'Worst',
-                      style: TextStyle(fontSize: 16, color: Colors.red),
-                    ),
-                    trailing: Text('Excellent',
-                        style: TextStyle(fontSize: 16, color: Colors.green)),
-                  ),
-                  TextField(
-                    controller: _commentController,
-                    decoration: const InputDecoration(
-                      labelText: 'Comment',
-                      border: OutlineInputBorder(),
-                    ),
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: _hasRated ? null : _submitRating,
-                    child: const Text('Submit Rating'),
-                  ),
-                ],
-              ),
-            ),
-    );
+                ),
+              ));
   }
 }

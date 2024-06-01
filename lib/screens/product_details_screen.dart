@@ -129,62 +129,43 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             as Map<String, dynamic>)['variant'][variantId];
 
         if (variantData['voucherCodes'].length > 0) {
-          final nextCodeIndex = variantData['nextVoucherCodeIndex'] ?? 0;
+          // Check if the item with this variant and voucherCode is already in the cart
+          final cartQuery = await FirebaseFirestore.instance
+              .collection('carts')
+              .where('uid', isEqualTo: user.uid)
+              .where('productId', isEqualTo: productId)
+              .where('variantId', isEqualTo: variantId)
+              .get();
 
-          if (nextCodeIndex < variantData['voucherCodes'].length) {
-            String selectedVoucherCode =
-                variantData['voucherCodes'][nextCodeIndex];
-
-            // Check if the item with this variant and voucherCode is already in the cart
-            final cartQuery = await FirebaseFirestore.instance
-                .collection('carts')
-                .where('uid', isEqualTo: user.uid)
-                .where('productId', isEqualTo: productId)
-                .where('variantId', isEqualTo: variantId)
-                .where('voucherCode', isEqualTo: selectedVoucherCode)
-                .get();
-
-            DocumentReference? docRef;
-            // Item with this variant and code not found, add it to the cart
-            if (cartQuery.docs.isEmpty) {
-              docRef =
-                  await FirebaseFirestore.instance.collection('carts').add({
-                'uid': user.uid,
-                'productId': productId,
-                'variantId': variantId,
-                'voucherCode': selectedVoucherCode,
-                'quantity': 1,
-                'productName': widget.product.name,
-                'productImage': widget.product.imageUrl,
-                'variant': variantData,
-              });
-              await docRef.update({'cartId': docRef.id});
-            } else {
-              // Item with this variant and code exists, update quantity
-              docRef = cartQuery.docs.first.reference;
-              DocumentSnapshot snapshot = await docRef.get();
-              int currentQuantity =
-                  (snapshot.data() as Map<String, dynamic>)['quantity'] ?? 0;
-              await docRef.update({
-                'quantity': currentQuantity + 1,
-              });
-            }
-
-            // Update the nextCodeIndex in Firestore
-            await FirebaseFirestore.instance
-                .collection('products')
-                .doc(productId)
-                .update({
-              'variant.$variantId.nextVoucherCodeIndex': nextCodeIndex + 1,
+          DocumentReference? docRef;
+          // Item with this variant and code not found, add it to the cart
+          if (cartQuery.docs.isEmpty) {
+            docRef = await FirebaseFirestore.instance.collection('carts').add({
+              'uid': user.uid,
+              'productId': productId,
+              'variantId': variantId,
+              // 'voucherCode': selectedVoucherCode,
+              'quantity': 1,
+              'productName': widget.product.name,
+              'productImage': widget.product.imageUrl,
+              'variant': variantData,
             });
-            _showSuccessMessage('Added to cart');
+            await docRef.update({'cartId': docRef.id});
           } else {
-            _showErrorMessage(
-                'No more voucher codes available for this variant.');
+            // Item with this variant and code exists, update quantity
+            docRef = cartQuery.docs.first.reference;
+            DocumentSnapshot snapshot = await docRef.get();
+            int currentQuantity =
+                (snapshot.data() as Map<String, dynamic>)['quantity'] ?? 0;
+            await docRef.update({
+              'quantity': currentQuantity + 1,
+            });
           }
+          _showSuccessMessage('Added to cart');
         } else {
           // No voucher codes available for this variant
           _showErrorMessage('No voucher codes available for this variant.');
+          return;
         }
       } catch (e) {
         print('Error adding to cart: $e');

@@ -37,6 +37,7 @@ class _CartScreenState extends State<CartScreen> {
       // Update the cartItems list
       setState(() {
         cartItems.removeWhere((item) => item.cartId == cartItemId);
+        _fetchCartItems(); // Refresh cart items after removing item
       });
     } catch (e) {
       print('Error removing item from cart: $e');
@@ -45,6 +46,9 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _fetchCartItems() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
