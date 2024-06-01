@@ -285,11 +285,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
           .doc(user.uid)
           .update({'rewardPoint': remainingLoyaltyPoints});
 
-      //Clear cart items locally
-      cartItems.clear();
-
       // Show the order invoice screen
       if (mounted) {
+        //Clear cart items locally
+        cartItems.clear();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => OrderInvoice(order: order)),

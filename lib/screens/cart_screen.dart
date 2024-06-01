@@ -89,10 +89,6 @@ class _CartScreenState extends State<CartScreen> {
                 variantAmount: variantData['amount'],
                 // variantAmount: selectedVariant['amount'],
               ));
-            } else {
-              // Handle case where variant is not found
-              print(
-                  'Error: Variant with ID $variantId not found in product $productId');
             }
           } else {
             // Handle case where product is not found
@@ -107,9 +103,6 @@ class _CartScreenState extends State<CartScreen> {
 
         // Calculate total after fetching cart items
         _calculateTotal();
-      } else {
-        // Handle the case where the user is not logged in
-        print("User not logged in");
       }
     } catch (error) {
       // Handle errors with the Firestore query itself
@@ -142,127 +135,137 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cart', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF62BDBD),
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-              color: Color(0xFF62BDBD),
-            ))
-          : Column(
-              // Main column to organize content
-              children: [
-                Expanded(
-                  child: cartItems.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.shopping_cart,
-                                  size: 150, color: Colors.grey),
-                              const SizedBox(height: 16),
-                              const Text('Your cart is empty',
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    color: Colors.grey,
-                                  )),
-                              const SizedBox(height: 150),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HomeScreen()),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.amber,
-                                ),
-                                child: const Text('See Products',
-                                    style: TextStyle(color: Colors.white)),
-                              ),
-                            ],
-                          ),
-                        )
-                      :
-                      // Make ListView expandable
-                      ListView.builder(
-                          itemCount: cartItems.length,
-                          itemBuilder: (ctx, index) {
-                            final cartItem = cartItems[index];
-                            return CartItemCardWidget(
-                              cartItem: cartItem,
-                              onQuantityChanged: (newQuantity) =>
-                                  _updateQuantity(cartItem.cartId, newQuantity),
-                              onRemove: () => _removeFromCart(cartItem.cartId),
-                            );
-                          },
-                        ),
-                ),
-
-                // Bottom Sheet (Only when cartItems is not empty)
-                if (cartItems.isNotEmpty)
-                  Container(
-                    color: const Color(0xFF62BDBD),
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total: $total ৳',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            // Fetch user name and email
-                            final user = FirebaseAuth.instance.currentUser;
-                            if (user != null) {
-                              final userData = await FirebaseFirestore.instance
-                                  .collection('Customers')
-                                  .doc(user.uid)
-                                  .get();
-                              final String userName = userData['fullName'];
-                              final String userEmail = userData['email'];
-                              final int rewardPoint = userData['rewardPoint'];
-                              final String userMobile = userData['mobileNo'];
-
-                              if (mounted) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PaymentScreen(
-                                      totalAmount: total,
-                                      cartItems: cartItems,
-                                      userName: userName,
-                                      userEmail: userEmail,
-                                      rewardPoint: rewardPoint,
-                                      userMobile: userMobile,
+        appBar: AppBar(
+          title: const Text('Cart', style: TextStyle(color: Colors.white)),
+          backgroundColor: const Color(0xFF62BDBD),
+          elevation: 1,
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        body: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                color: Color(0xFF62BDBD),
+              ))
+            : RefreshIndicator(
+                onRefresh: _fetchCartItems,
+                child: Column(
+                  // Main column to organize content
+                  children: [
+                    Expanded(
+                      child: cartItems.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.shopping_cart,
+                                      size: 150, color: Colors.grey),
+                                  const SizedBox(height: 16),
+                                  const Text('Your cart is empty',
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        color: Colors.grey,
+                                      )),
+                                  const SizedBox(height: 150),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const HomeScreen()),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.amber,
                                     ),
+                                    child: const Text('See Products',
+                                        style: TextStyle(color: Colors.white)),
                                   ),
+                                ],
+                              ),
+                            )
+                          :
+                          // Make ListView expandable
+                          ListView.builder(
+                              itemCount: cartItems.length,
+                              itemBuilder: (ctx, index) {
+                                final cartItem = cartItems[index];
+                                return CartItemCardWidget(
+                                  cartItem: cartItem,
+                                  onQuantityChanged: (newQuantity) =>
+                                      _updateQuantity(
+                                          cartItem.cartId, newQuantity),
+                                  onRemove: () =>
+                                      _removeFromCart(cartItem.cartId),
                                 );
-                              }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                          ),
-                          child: const Text('Checkout',
-                              style: TextStyle(color: const Color(0xFF62BDBD))),
-                        ),
-                      ],
+                              },
+                            ),
                     ),
-                  ),
-              ],
-            ),
-    );
+
+                    // Bottom Sheet (Only when cartItems is not empty)
+                    if (cartItems.isNotEmpty)
+                      Container(
+                        color: const Color(0xFF62BDBD),
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Total: $total ৳',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                // Fetch user name and email
+                                final user = FirebaseAuth.instance.currentUser;
+                                if (user != null) {
+                                  final userData = await FirebaseFirestore
+                                      .instance
+                                      .collection('Customers')
+                                      .doc(user.uid)
+                                      .get();
+                                  final String userName = userData['fullName'];
+                                  final String userEmail = userData['email'];
+                                  final int rewardPoint =
+                                      userData['rewardPoint'];
+                                  final String userMobile =
+                                      userData['mobileNo'];
+
+                                  if (mounted) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PaymentScreen(
+                                          totalAmount: total,
+                                          cartItems: cartItems,
+                                          userName: userName,
+                                          userEmail: userEmail,
+                                          rewardPoint: rewardPoint,
+                                          userMobile: userMobile,
+                                        ),
+                                      ),
+                                    );
+                                    setState(() {
+                                      _fetchCartItems();
+                                    });
+                                  }
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                              ),
+                              child: const Text('Checkout',
+                                  style: TextStyle(color: Color(0xFF62BDBD))),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ));
   }
 }

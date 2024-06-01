@@ -1,11 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:game_sphere_bd/models/order.dart'; // Import your Order model
+import 'package:game_sphere_bd/models/order.dart';
 import 'package:game_sphere_bd/models/order_product.dart';
 import 'package:game_sphere_bd/screens/home_screen.dart';
-import 'package:game_sphere_bd/screens/order_screen.dart';
 import 'package:game_sphere_bd/screens/rate_order_screen.dart';
-import 'package:intl/intl.dart'; // Import your OrderProduct model
+import 'package:intl/intl.dart';
 
 class OrderInvoice extends StatelessWidget {
   final Order order;
