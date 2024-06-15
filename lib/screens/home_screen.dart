@@ -169,15 +169,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.all(0),
                   shrinkWrap: true,
                   physics:
-                      const NeverScrollableScrollPhysics(), // to avoid conflict with SingleChildScrollView
+                      const NeverScrollableScrollPhysics(),
                   itemCount: products.length,
-                  // itemCount: 8,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // Two items per row
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
                     crossAxisSpacing: 0,
                     mainAxisSpacing: 0,
-                    childAspectRatio:
-                        6 / 8, // Adjust to fit card's aspect ratio
+                    childAspectRatio: 6 / 8,
                   ),
                   itemBuilder: (context, index) {
                     return ProductCardWidget(product: products[index]);
@@ -188,22 +186,4 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ));
   }
-
-  // void _showBottomSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return const SizedBox(
-  //         height: 200,
-  //         // Customize the bottom sheet content here
-  //         child: Center(
-  //           child: Text(
-  //             'Your Bottom Sheet Content go',
-  //             style: TextStyle(fontSize: 20),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 }

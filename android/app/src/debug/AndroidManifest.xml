@@ -7,7 +7,8 @@
 
     <application 
           android:label="game_sphere_bd"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        tools:replace="android:icon">
     </application>
         
 </manifest>

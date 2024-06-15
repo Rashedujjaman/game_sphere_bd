@@ -16,6 +16,7 @@ class _RegistrationScreenState extends State<RegisterScreen> {
   final TextEditingController _mobileNoController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -40,6 +41,7 @@ class _RegistrationScreenState extends State<RegisterScreen> {
     final String mobileNo = _mobileNoController.text;
     final String email = _emailController.text;
     final String password = _passwordController.text;
+    final String address = _addressController.text;
 
     setState(() => _isLoading = true);
     if (_formKey.currentState!.validate()) {
@@ -62,6 +64,7 @@ class _RegistrationScreenState extends State<RegisterScreen> {
               'imageUrl': '',
               'password': password,
               'uid': userCredential.user!.uid,
+              'address': address,
             })
             .then((value) => print('User data added successfully'))
             .catchError((error) => print('Error adding user data: $error'));
@@ -217,6 +220,25 @@ class _RegistrationScreenState extends State<RegisterScreen> {
                         ),
                         const SizedBox(height: 16.0),
                         TextFormField(
+                          controller: _addressController,
+                          decoration: const InputDecoration(
+                            labelText: 'Address',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(),
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10),
+                            floatingLabelBehavior: FloatingLabelBehavior.never,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your Address';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16.0),
+                        TextFormField(
                           controller: _passwordController,
                           decoration: const InputDecoration(
                             labelText: 'Password',
@@ -228,12 +250,18 @@ class _RegistrationScreenState extends State<RegisterScreen> {
                             floatingLabelBehavior: FloatingLabelBehavior.never,
                           ),
                           obscureText: true,
-                          validator: (value) {
+                            validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a Password';
                             }
+                            if (value.length < 8) {
+                              return 'Password must be at least 8 characters long';
+                            }
+                            if (!RegExp(r'^(?=.*[a-zA-Z])(?=.*[0-9])').hasMatch(value)) {
+                              return 'Password must contain both letters and numbers';
+                            }
                             return null;
-                          },
+                            },
                         ),
                         const SizedBox(height: 16.0),
                         TextFormField(
