@@ -1,14 +1,12 @@
 name: game_sphere_bd
 description: "A new Flutter project."
 
-publish_to: 'none'
-
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.0 <4.0.0'
-
+  sdk: ">=3.2.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -29,6 +27,7 @@ dependencies:
   url_launcher: ^6.1.11
   flutter_sslcommerz: ^2.2.2-nullsafety.0
   flutter_rating_bar: ^4.0.0
+  flutter_lints: ^4.0.0
   # flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
@@ -54,18 +53,13 @@ flutter_launcher_icons:
     generate: true
     image_path: "assets/images/app_logo.png"
 
-
   flutter_lints: ^4.0.0
 
 flutter:
-
-
   uses-material-design: true
 
-
-  
   assets:
-   - assets/images/
- 
+    - assets/images/
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
