@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:game_sphere_bd/screens/home_screen.dart';
 import 'package:game_sphere_bd/screens/register_screen.dart';
+import 'package:game_sphere_bd/screens/reset_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -207,6 +208,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextButton(
                               onPressed: () {
                                 // TODO: Implement forgot password functionality
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return ResetPasswordScreen();
+                                }));
                               },
                               child: const Text(
                                 'Forgot Password?',
