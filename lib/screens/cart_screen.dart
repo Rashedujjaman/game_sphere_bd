@@ -90,10 +90,7 @@ class _CartScreenState extends State<CartScreen> {
                 // variantAmount: selectedVariant['amount'],
               ));
             }
-          } else {
-            // Handle case where product is not found
-            print('Error: Product with ID $productId not found');
-          }
+          } else {}
         }
 
         setState(() {
