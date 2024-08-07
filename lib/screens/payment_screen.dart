@@ -6,6 +6,7 @@ import 'package:flutter_sslcommerz/model/SSLCurrencyType.dart';
 import 'package:flutter_sslcommerz/sslcommerz.dart';
 import 'package:game_sphere_bd/models/cart_item.dart';
 import 'package:game_sphere_bd/models/order_product.dart';
+// ignore: library_prefixes
 import 'package:game_sphere_bd/models/order.dart' as myOrder;
 import 'package:game_sphere_bd/screens/order_invoice.dart';
 import 'package:game_sphere_bd/widgets/payment_cart_item_card_widget.dart';
@@ -32,6 +33,7 @@ class PaymentScreen extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _PaymentScreenState createState() => _PaymentScreenState();
 }
 
@@ -230,8 +232,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
           }
         } else {
           // Handle case where product or variant is not found
-          print(
-              'Error: Product with ID ${cartItem.productId} or variant ${cartItem.variantId} not found');
           _showErrorMessage('Error processing order. Please try again.');
           return; // Exit the function if a product or variant is not found
         }

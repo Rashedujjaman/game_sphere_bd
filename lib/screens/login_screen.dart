@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    final email = _emailController.text; // Use _emailController
+    final email = _emailController.text;
     final password = _passwordController.text;
 
     setState(() => _isLoading = true);

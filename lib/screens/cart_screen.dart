@@ -27,22 +27,17 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _removeFromCart(String cartItemId) async {
-    try {
-      // Remove the cart item from Firestore
-      await FirebaseFirestore.instance
-          .collection('carts')
-          .doc(cartItemId)
-          .delete();
+    // Remove the cart item from Firestore
+    await FirebaseFirestore.instance
+        .collection('carts')
+        .doc(cartItemId)
+        .delete();
 
-      // Update the cartItems list
-      setState(() {
-        cartItems.removeWhere((item) => item.cartId == cartItemId);
-        _fetchCartItems(); // Refresh cart items after removing item
-      });
-    } catch (e) {
-      print('Error removing item from cart: $e');
-      // Handle the error (e.g., show a SnackBar to the user)
-    }
+    // Update the cartItems list
+    setState(() {
+      cartItems.removeWhere((item) => item.cartId == cartItemId);
+      _fetchCartItems(); // Refresh cart items after removing item
+    });
   }
 
   Future<void> _fetchCartItems() async {

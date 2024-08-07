@@ -69,10 +69,12 @@ class _RegistrationScreenState extends State<RegisterScreen> {
             .then((value) => print('User data added successfully'))
             .catchError((error) => print('Error adding user data: $error'));
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -250,18 +252,19 @@ class _RegistrationScreenState extends State<RegisterScreen> {
                             floatingLabelBehavior: FloatingLabelBehavior.never,
                           ),
                           obscureText: true,
-                            validator: (value) {
+                          validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a Password';
                             }
                             if (value.length < 8) {
                               return 'Password must be at least 8 characters long';
                             }
-                            if (!RegExp(r'^(?=.*[a-zA-Z])(?=.*[0-9])').hasMatch(value)) {
+                            if (!RegExp(r'^(?=.*[a-zA-Z])(?=.*[0-9])')
+                                .hasMatch(value)) {
                               return 'Password must contain both letters and numbers';
                             }
                             return null;
-                            },
+                          },
                         ),
                         const SizedBox(height: 16.0),
                         TextFormField(
