@@ -111,17 +111,12 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _updateQuantity(String cartItemId, int newQuantity) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('carts')
-          .doc(cartItemId)
-          .update({'quantity': newQuantity});
+    await FirebaseFirestore.instance
+        .collection('carts')
+        .doc(cartItemId)
+        .update({'quantity': newQuantity});
 
-      _fetchCartItems(); // Refresh cart items after updating quantity
-    } catch (e) {
-      print('Error updating quantity: $e');
-      // Show an error message to the user
-    }
+    _fetchCartItems(); // Refresh cart items after updating quantity
   }
 
   @override
